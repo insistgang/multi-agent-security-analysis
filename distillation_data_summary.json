@@ -1,0 +1,18 @@
+{
+  "generation_time": "2025-10-08T15:50:58.828613",
+  "total_samples": 149,
+  "expert_types": {
+    "web_attack": {
+      "sample_count": 50,
+      "coverage_percentage": 100.0
+    },
+    "vulnerability": {
+      "sample_count": 50,
+      "coverage_percentage": 100.0
+    },
+    "illegal_connection": {
+      "sample_count": 49,
+      "coverage_percentage": 100.0
+    }
+  }
+}

@@ -1,0 +1,274 @@
+{
+  "analysis_session": {
+    "session_id": "session_20250113_001",
+    "start_time": "2025-01-13T09:00:00Z",
+    "end_time": "2025-01-13T09:30:00Z",
+    "total_duration": "30分12秒",
+    "system_version": "1.0.0",
+    "model_version": "Qwen2-7B-v2.5"
+  },
+  "overall_statistics": {
+    "total_alerts_processed": 2847,
+    "confirmed_attacks": 2134,
+    "false_positives": 713,
+    "accuracy_rate": 95.62,
+    "average_response_time": 1.8,
+    "throughput_per_second": 28.5
+  },
+  "attack_type_distribution": {
+    "SQL注入": {
+      "count": 856,
+      "percentage": 30.1,
+      "avg_risk_score": 8.7,
+      "top_source_ips": ["192.168.1.100", "10.0.0.50", "172.16.0.10"],
+      "affected_systems": ["CRM系统", "用户数据库", "管理后台"]
+    },
+    "XSS攻击": {
+      "count": 642,
+      "percentage": 22.6,
+      "avg_risk_score": 8.2,
+      "top_source_ips": ["203.0.113.10", "198.51.100.20", "192.0.2.30"],
+      "affected_systems": ["Web门户", "评论区", "用户个人中心"]
+    },
+    "命令注入": {
+      "count": 523,
+      "percentage": 18.4,
+      "avg_risk_score": 9.1,
+      "top_source_ips": ["10.0.0.100", "172.16.1.50", "192.168.2.200"],
+      "affected_systems": ["备份系统", "文件上传", "日志管理"]
+    },
+    "目录遍历": {
+      "count": 412,
+      "percentage": 14.5,
+      "avg_risk_score": 7.5,
+      "top_source_ips": ["192.168.3.100", "10.0.1.200", "172.16.2.50"],
+      "affected_systems": ["文件下载", "文档管理", "资源访问"]
+    },
+    "CSRF攻击": {
+      "count": 287,
+      "percentage": 10.1,
+      "avg_risk_score": 7.8,
+      "top_source_ips": ["198.51.100.100", "203.0.113.200", "192.0.2.150"],
+      "affected_systems": ["转账系统", "用户设置", "权限管理"]
+    },
+    "其他": {
+      "count": 127,
+      "percentage": 4.5,
+      "avg_risk_score": 6.9,
+      "top_source_ips": ["混合来源"],
+      "affected_systems": ["多个系统"]
+    }
+  },
+  "risk_level_distribution": {
+    "严重": {
+      "count": 1243,
+      "percentage": 43.7,
+      "color": "#f44336",
+      "description": "需要立即处理的高危威胁"
+    },
+    "高危": {
+      "count": 567,
+      "percentage": 19.9,
+      "color": "#ff5722",
+      "description": "需要优先处理的威胁"
+    },
+    "中危": {
+      "count": 894,
+      "percentage": 31.4,
+      "color": "#ff9800",
+      "description": "需要监控和处理的威胁"
+    },
+    "低危": {
+      "count": 143,
+      "percentage": 5.0,
+      "color": "#4caf50",
+      "description": "可以延后处理的威胁"
+    }
+  },
+  "multi_agent_performance": {
+    "router_agent": {
+      "total_processed": 2847,
+      "success_rate": 99.8,
+      "avg_response_time_ms": 0.8,
+      "load_percentage": 45,
+      "routing_accuracy": 97.5
+    },
+    "web_attack_expert": {
+      "total_processed": 1523,
+      "success_rate": 95.2,
+      "avg_response_time_s": 1.2,
+      "load_percentage": 78,
+      "specialization": "SQL注入、XSS、CSRF、文件上传"
+    },
+    "vulnerability_expert": {
+      "total_processed": 867,
+      "success_rate": 93.5,
+      "avg_response_time_s": 2.1,
+      "load_percentage": 62,
+      "specialization": "系统漏洞、提权攻击、0day利用"
+    },
+    "illegal_connection_expert": {
+      "total_processed": 457,
+      "success_rate": 97.3,
+      "avg_response_time_s": 1.5,
+      "load_percentage": 53,
+      "specialization": "恶意IP、C&C通信、数据泄露"
+    }
+  },
+  "rag_enhancement_results": {
+    "total_queries": 2847,
+    "threat_intel_matches": 2143,
+    "match_rate": 75.3,
+    "avg_similarity_score": 0.87,
+    "top_matched_threats": [
+      {
+        "threat": "CVE-2025-0123: SQL注入漏洞",
+        "matches": 234,
+        "confidence": 0.95
+      },
+      {
+        "threat": "APT29组织攻击活动",
+        "matches": 187,
+        "confidence": 0.92
+      },
+      {
+        "threat": "LockBit 3.0勒索软件",
+        "matches": 156,
+        "confidence": 0.89
+      }
+    ]
+  },
+  "geographic_distribution": {
+    "top_source_countries": [
+      {
+        "country": "美国",
+        "count": 974,
+        "percentage": 34.2
+      },
+      {
+        "country": "俄罗斯",
+        "count": 640,
+        "percentage": 22.5
+      },
+      {
+        "country": "中国",
+        "count": 521,
+        "percentage": 18.3
+      },
+      {
+        "country": "朝鲜",
+        "count": 345,
+        "percentage": 12.1
+      },
+      {
+        "country": "其他",
+        "count": 367,
+        "percentage": 12.9
+      }
+    ]
+  },
+  "timeline_analysis": {
+    "peak_attack_hour": "14:00-15:00",
+    "peak_attack_count": 342,
+    "quiet_hour": "03:00-04:00",
+    "quiet_attack_count": 23,
+    "hourly_distribution": {
+      "00:00": 45,
+      "01:00": 32,
+      "02:00": 28,
+      "03:00": 23,
+      "04:00": 25,
+      "05:00": 67,
+      "06:00": 123,
+      "07:00": 187,
+      "08:00": 234,
+      "09:00": 289,
+      "10:00": 312,
+      "11:00": 298,
+      "12:00": 267,
+      "13:00": 321,
+      "14:00": 342,
+      "15:00": 334,
+      "16:00": 298,
+      "17:00": 256,
+      "18:00": 198,
+      "19:00": 145,
+      "20:00": 98,
+      "21:00": 76,
+      "22:00": 54,
+      "23:00": 41
+    }
+  },
+  "affected_assets": {
+    "top_affected_systems": [
+      {
+        "system": "CRM系统",
+        "ip": "192.168.1.10",
+        "attack_count": 456,
+        "risk_level": "严重"
+      },
+      {
+        "system": "Web服务器",
+        "ip": "10.0.0.5",
+        "attack_count": 387,
+        "risk_level": "严重"
+      },
+      {
+        "system": "数据库服务器",
+        "ip": "10.0.0.10",
+        "attack_count": 345,
+        "risk_level": "高危"
+      },
+      {
+        "system": "API网关",
+        "ip": "10.0.0.1",
+        "attack_count": 298,
+        "risk_level": "高危"
+      },
+      {
+        "system": "文件服务器",
+        "ip": "10.0.0.20",
+        "attack_count": 234,
+        "risk_level": "中危"
+      }
+    ]
+  },
+  "recommended_actions": {
+    "immediate_actions": [
+      "阻断恶意IP地址：192.168.1.100, 10.0.0.50",
+      "更新WAF规则，拦截SQL注入和XSS攻击",
+      "修补CVE-2025-0123漏洞"
+    ],
+    "short_term_actions": [
+      "加强输入验证和输出编码",
+      "实施最小权限原则",
+      "部署入侵检测系统"
+    ],
+    "long_term_actions": [
+      "建立安全开发生命周期流程",
+      "定期进行安全培训和演练",
+      "实施零信任架构"
+    ]
+  },
+  "performance_metrics": {
+    "hardware_utilization": {
+      "cpu_usage": 65.3,
+      "memory_usage": 78.5,
+      "gpu_usage": 85.0,
+      "gpu_memory_used": "10.2GB",
+      "disk_io": "125MB/s"
+    },
+    "model_performance": {
+      "inference_time_avg_ms": 1450,
+      "batch_processing_time_avg_ms": 2340,
+      "model_loading_time_s": 12.3,
+      "cache_hit_rate": 87.5
+    }
+  },
+  "incident_correlation": {
+    "linked_incidents": 23,
+    "attack_chains_detected": 5,
+    "persistent_attackers": 12,
+    "high_confidence_attributions": 3
+  }
+}

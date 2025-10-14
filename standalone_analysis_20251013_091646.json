@@ -1,0 +1,261 @@
+{
+  "analysis_time": "2025-10-13T09:16:46.363511",
+  "total_records": 14,
+  "statistics": {
+    "attack_types": {
+      "SQL Injection": 3,
+      "XSS": 3,
+      "Command Injection": 2,
+      "Directory Traversal": 3,
+      "CSRF": 2,
+      "Unauthorized Access": 1
+    },
+    "risk_levels": {
+      "Low": 0,
+      "Medium": 4,
+      "High": 2,
+      "Critical": 8
+    },
+    "source_ips": {
+      "192.168.1.100": 2,
+      "192.168.1.101": 2,
+      "192.168.1.102": 2,
+      "192.168.1.103": 2,
+      "192.168.1.104": 2,
+      "INFO": 1,
+      "WARNING": 1,
+      "ERROR": 1,
+      "CRITICAL": 1
+    }
+  },
+  "results": [
+    {
+      "id": 1,
+      "timestamp": "2025-01-10T12:00:00Z",
+      "attack_type": "SQL Injection",
+      "payload": "SELECT * FROM users WHERE id='1' OR '1'='1",
+      "source_ip": "192.168.1.100",
+      "target_ip": "10.0.0.5",
+      "threat_level": "high",
+      "protocol": "HTTP",
+      "attack_technique": "SQL Injection",
+      "risk_score": 8.5,
+      "severity": "Critical",
+      "recommendations": [
+        "Use parameterized queries",
+        "Implement input validation",
+        "Deploy Web Application Firewall"
+      ],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 2,
+      "timestamp": "2025-01-10T12:05:00Z",
+      "attack_type": "XSS",
+      "payload": "<script>alert(document.cookie)</script>",
+      "source_ip": "192.168.1.101",
+      "target_ip": "10.0.0.6",
+      "threat_level": "medium",
+      "protocol": "HTTP",
+      "attack_technique": "Cross-Site Scripting",
+      "risk_score": 8.5,
+      "severity": "Critical",
+      "recommendations": [
+        "Implement output encoding",
+        "Use Content Security Policy",
+        "Validate input"
+      ],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 3,
+      "timestamp": "2025-01-10T12:10:00Z",
+      "attack_type": "Command Injection",
+      "payload": "; cat /etc/passwd",
+      "source_ip": "192.168.1.102",
+      "target_ip": "10.0.0.7",
+      "threat_level": "critical",
+      "protocol": "HTTP",
+      "attack_technique": "Command Injection",
+      "risk_score": 9.0,
+      "severity": "Critical",
+      "recommendations": [
+        "Block special characters",
+        "Use allow-list validation",
+        "Run with minimal privileges"
+      ],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 4,
+      "timestamp": "2025-01-10T12:15:00Z",
+      "attack_type": "Directory Traversal",
+      "payload": "../../../etc/passwd",
+      "source_ip": "192.168.1.103",
+      "target_ip": "10.0.0.8",
+      "threat_level": "medium",
+      "protocol": "HTTP",
+      "attack_technique": "Path Traversal",
+      "risk_score": 8.0,
+      "severity": "Critical",
+      "recommendations": [],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 5,
+      "timestamp": "2025-01-10T12:20:00Z",
+      "attack_type": "CSRF",
+      "payload": "<img src='http://bank.com/transfer?to=attacker&amount=1000'>",
+      "source_ip": "192.168.1.104",
+      "target_ip": "10.0.0.9",
+      "threat_level": "low",
+      "protocol": "HTTP",
+      "attack_technique": "Cross-Site Request Forgery",
+      "risk_score": 7.0,
+      "severity": "High",
+      "recommendations": [],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 1,
+      "timestamp": "2025-01-10T12:00:00Z",
+      "attack_type": "SQL Injection",
+      "payload": "SELECT * FROM users WHERE id='1' OR '1'='1",
+      "source_ip": "192.168.1.100",
+      "target_ip": "10.0.0.5",
+      "threat_level": "high",
+      "protocol": "HTTP",
+      "attack_technique": "SQL Injection",
+      "risk_score": 8.5,
+      "severity": "Critical",
+      "recommendations": [
+        "Use parameterized queries",
+        "Implement input validation",
+        "Deploy Web Application Firewall"
+      ],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 2,
+      "timestamp": "2025-01-10T12:05:00Z",
+      "attack_type": "XSS",
+      "payload": "<script>alert(document.cookie)</script>",
+      "source_ip": "192.168.1.101",
+      "target_ip": "10.0.0.6",
+      "threat_level": "medium",
+      "protocol": "HTTP",
+      "attack_technique": "Cross-Site Scripting",
+      "risk_score": 8.5,
+      "severity": "Critical",
+      "recommendations": [
+        "Implement output encoding",
+        "Use Content Security Policy",
+        "Validate input"
+      ],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 3,
+      "timestamp": "2025-01-10T12:10:00Z",
+      "attack_type": "Command Injection",
+      "payload": "; cat /etc/passwd",
+      "source_ip": "192.168.1.102",
+      "target_ip": "10.0.0.7",
+      "threat_level": "critical",
+      "protocol": "HTTP",
+      "attack_technique": "Command Injection",
+      "risk_score": 9.0,
+      "severity": "Critical",
+      "recommendations": [
+        "Block special characters",
+        "Use allow-list validation",
+        "Run with minimal privileges"
+      ],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 4,
+      "timestamp": "2025-01-10T12:15:00Z",
+      "attack_type": "Directory Traversal",
+      "payload": "../../../etc/passwd",
+      "source_ip": "192.168.1.103",
+      "target_ip": "10.0.0.8",
+      "threat_level": "medium",
+      "protocol": "HTTP",
+      "attack_technique": "Path Traversal",
+      "risk_score": 8.0,
+      "severity": "Critical",
+      "recommendations": [],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 5,
+      "timestamp": "2025-01-10T12:20:00Z",
+      "attack_type": "CSRF",
+      "payload": "<img src='http://bank.com/transfer?to=attacker&amount=1000'>",
+      "source_ip": "192.168.1.104",
+      "target_ip": "10.0.0.9",
+      "threat_level": "low",
+      "protocol": "HTTP",
+      "attack_technique": "Cross-Site Request Forgery",
+      "risk_score": 7.0,
+      "severity": "High",
+      "recommendations": [],
+      "analysis_time": "0.001s",
+      "success": true
+    },
+    {
+      "id": 1,
+      "timestamp": "2025-01-10 15:00:00",
+      "attack_type": "SQL Injection",
+      "payload": "GET /index.php?id=1' OR '1'='1 HTTP/1.1",
+      "source_ip": "INFO",
+      "target_ip": "Unknown",
+      "threat_level": "Medium",
+      "protocol": "HTTP",
+      "success": true
+    },
+    {
+      "id": 2,
+      "timestamp": "2025-01-10 15:01:00",
+      "attack_type": "XSS",
+      "payload": "POST /search?q=<script>alert(1)</script> HTTP/1.1",
+      "source_ip": "WARNING",
+      "target_ip": "Unknown",
+      "threat_level": "Medium",
+      "protocol": "HTTP",
+      "success": true
+    },
+    {
+      "id": 3,
+      "timestamp": "2025-01-10 15:02:00",
+      "attack_type": "Directory Traversal",
+      "payload": "GET /admin?file=../../../../etc/passwd HTTP/1.1",
+      "source_ip": "ERROR",
+      "target_ip": "Unknown",
+      "threat_level": "Medium",
+      "protocol": "HTTP",
+      "success": true
+    },
+    {
+      "id": 5,
+      "timestamp": "2025-01-10 15:04:00",
+      "attack_type": "Unauthorized Access",
+      "payload": "GET /config.php HTTP/1.1",
+      "source_ip": "CRITICAL",
+      "target_ip": "Unknown",
+      "threat_level": "Medium",
+      "protocol": "HTTP",
+      "success": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "model_config": {
+    "model_path": "./models/Qwen2-7B",
+    "use_quantization": false,
+    "device": "cpu",
+    "torch_dtype": "float32",
+    "trust_remote_code": true
+  },
+  "performance_settings": {
+    "batch_size": 1,
+    "max_length": 512,
+    "use_cache": true
+  },
+  "fallback_mode": true,
+  "reason": "No GPU support for quantization"
+}

@@ -1,0 +1,48 @@
+# 深度学习框架
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+
+# Transformers库
+transformers==4.36.0
+accelerate==0.25.0
+bitsandbytes==0.41.3
+optimum==1.16.0
+
+# ModelScope (模型下载)
+modelscope==1.9.5
+
+# PEFT微调
+peft==0.7.1
+
+# API和Web框架
+fastapi==0.104.1
+uvicorn==0.24.0
+streamlit==1.29.0
+pydantic==2.5.0
+
+# 数据处理
+pandas==2.1.4
+numpy==1.24.4
+openpyxl==3.1.5
+
+# 向量数据库
+chromadb==0.4.22
+sentence-transformers==2.2.2
+
+# 工具库
+requests==2.31.0
+python-multipart==0.0.6
+aiofiles==23.2.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# 监控和日志
+loguru==0.7.2
+psutil==5.9.6
+ GPUtil==1.4.0
+
+# 开发工具
+pytest==7.4.3
+black==23.11.0
+flake8==6.1.0

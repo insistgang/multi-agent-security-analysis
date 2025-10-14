@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch
+*.pth
+*.pt
+
+# Model files (too large for GitHub)
+models/Qwen2-7B/
+*.bin
+*.safetensors
+*.model
+
+# Logs
+logs/
+*.log
+
+# Data files (keep raw data but exclude processed)
+data/processed/*.json
+data/*.xlsx
+data/*.xls
+
+# Streamlit cache
+.streamlit/
+*.cache
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Claude Code
+.claude/
+*.md~
+
+# Test files
+test_*
+*_test.py
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/

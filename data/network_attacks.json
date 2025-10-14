@@ -1,0 +1,24 @@
+[
+  {
+    "attack_type": "DDoS",
+    "payload": "SYN flood with 1000 packets/second",
+    "source_ip": "10.0.0.100",
+    "target_ip": "192.168.1.1",
+    "timestamp": "2025-01-10T13:00:00Z",
+    "attack_stage": "reconnaissance",
+    "threat_level": "critical",
+    "protocol": "TCP",
+    "description": "分布式拒绝服务攻击"
+  },
+  {
+    "attack_type": "Port Scan",
+    "payload": "Nmap scan of all ports",
+    "source_ip": "172.16.0.50",
+    "target_ip": "192.168.1.0/24",
+    "timestamp": "2025-01-10T13:05:00Z",
+    "attack_stage": "reconnaissance",
+    "threat_level": "medium",
+    "protocol": "TCP",
+    "description": "端口扫描攻击"
+  }
+]
