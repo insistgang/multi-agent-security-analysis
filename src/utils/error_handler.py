@@ -5,6 +5,7 @@
 """
 import time
 import asyncio
+import inspect
 import logging
 from typing import Any, Callable, Dict, Optional, Union, List
 from dataclasses import dataclass, field
@@ -63,12 +64,7 @@ class CircuitBreaker:
 
     def call(self, func: Callable, *args, **kwargs) -> Any:
         """通过熔断器调用函数"""
-        if self.state == CircuitState.OPEN:
-            if self._should_attempt_reset():
-                self.state = CircuitState.HALF_OPEN
-                logger.info(f"熔断器 {self.name} 进入半开状态")
-            else:
-                raise Exception(f"熔断器 {self.name} 处于开启状态，拒绝调用")
+        self._prepare_call()
 
         start_time = time.time()
         last_exception = None
@@ -92,6 +88,40 @@ class CircuitBreaker:
 
         # 所有重试都失败
         raise last_exception
+
+    async def call_async(self, func: Callable, *args, **kwargs) -> Any:
+        """通过熔断器调用并等待异步函数"""
+        self._prepare_call()
+
+        start_time = time.time()
+        last_exception = None
+
+        for attempt in range(self.config.max_retries + 1):
+            try:
+                result = await func(*args, **kwargs)
+
+                self._on_success(time.time() - start_time)
+                return result
+
+            except Exception as e:
+                last_exception = e
+                self._on_failure(e, attempt)
+
+                if attempt < self.config.max_retries:
+                    delay = self.config.retry_delay * (self.config.backoff_factor ** attempt)
+                    logger.warning(f"异步调用失败，{delay}秒后重试 (尝试 {attempt + 1}/{self.config.max_retries})")
+                    await asyncio.sleep(delay)
+
+        raise last_exception
+
+    def _prepare_call(self):
+        """检查熔断状态并在超时后进入半开状态"""
+        if self.state == CircuitState.OPEN:
+            if self._should_attempt_reset():
+                self.state = CircuitState.HALF_OPEN
+                logger.info(f"熔断器 {self.name} 进入半开状态")
+            else:
+                raise Exception(f"熔断器 {self.name} 处于开启状态，拒绝调用")
 
     def _should_attempt_reset(self) -> bool:
         """是否应该尝试重置熔断器"""
@@ -235,12 +265,9 @@ def with_circuit_breaker(breaker_name: str, config: CircuitBreakerConfig = None)
 
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
-            # 异步版本的熔断器调用
-            return await asyncio.get_event_loop().run_in_executor(
-                None, breaker.call, func, *args, **kwargs
-            )
+            return await breaker.call_async(func, *args, **kwargs)
 
-        if asyncio.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
             return async_wrapper
         else:
             return sync_wrapper
@@ -289,7 +316,7 @@ def with_retry(max_retries: int = 3, delay: float = 1.0, backoff_factor: float =
 
             raise last_exception
 
-        if asyncio.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
             return async_wrapper
         else:
             return wrapper
@@ -317,14 +344,14 @@ def with_fallback(fallback_func: Callable = None):
             except Exception as e:
                 logger.warning(f"异步主函数失败，使用降级方案: {e}")
                 if fallback_func:
-                    if asyncio.iscoroutinefunction(fallback_func):
+                    if inspect.iscoroutinefunction(fallback_func):
                         return await fallback_func(*args, **kwargs)
                     else:
                         return fallback_func(*args, **kwargs)
                 else:
                     raise
 
-        if asyncio.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
             return async_wrapper
         else:
             return wrapper

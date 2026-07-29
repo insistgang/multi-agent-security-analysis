@@ -77,9 +77,9 @@ $RECYCLE.BIN/
 .claude/
 *.md~
 
-# Test files
-test_*
-*_test.py
+# Ad hoc root-level test scripts
+/test_*
+/*_test.py
 
 # Temporary files
 *.tmp
