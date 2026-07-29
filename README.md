@@ -91,6 +91,18 @@ cd web_demo && streamlit run excel_final.py --server.port 8886
 - 风险信息.xlsx（3,926条记录）
 - 支持Excel自动转JSON格式
 
+## 🧪 核心测试
+
+无需下载 Qwen2-7B 或安装深度学习依赖，即可运行核心可靠性测试：
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+当前测试覆盖同步/异步熔断器装饰器中的异步等待、重试和异常传播行为。
+
+后续可移植性、安全和测试改进见 [`docs/IMPROVEMENT_ROADMAP.md`](docs/IMPROVEMENT_ROADMAP.md)。
+
 ## 🤖 AI模型
 
 - 主模型：Qwen2-7B
