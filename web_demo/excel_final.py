@@ -6,6 +6,7 @@ from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 import os
+import html as html_lib
 
 # 设置页面配置
 st.set_page_config(
@@ -110,29 +111,47 @@ with col1:
 with col2:
     st.markdown('<span class="status-online"></span>数据就绪', unsafe_allow_html=True)
 with col3:
-    st.success("🚀 GPU加速: RTX 4070 SUPER")
+    st.info("GPU status: not verified in this demo")
 with col4:
-    st.info("🤖 模型: Qwen2-7B")
+    st.info("Demo view (not live model inference)")
 with col5:
-    st.warning("⚡ 准确率: 98.73%")
+    st.caption("Accuracy figures below are simulated")
 
 # 自动加载数据
 @st.cache_data(ttl=0)  # 禁用缓存
 def load_excel_json_data():
-    """加载转换后的Excel JSON数据"""
-    data_file = os.path.abspath('../data/processed/excel_attack_data.json')
-
-    if os.path.exists(data_file):
-        with open(data_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+    """Load converted Excel JSON, then fall back to checked-in samples."""
+    candidates = [
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'excel_attack_data.json')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'web_attacks.json')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'network_attacks.json')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'test.json')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'sample.csv')),
+    ]
+    for data_file in candidates:
+        if not os.path.exists(data_file):
+            continue
+        try:
+            if data_file.endswith('.csv'):
+                return pd.read_csv(data_file).to_dict(orient='records')
+            with open(data_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                for key in ('attacks', 'alerts', 'data', 'records'):
+                    if isinstance(data.get(key), list):
+                        return data[key]
+                return [data]
             return data
+        except Exception:
+            continue
     return []
 
 # 主程序
 attack_data = load_excel_json_data()
 
 if attack_data:
-    st.success(f"✅ 数据加载成功！共 {len(attack_data):,} 条记录")
+    st.success(f"Data loaded: {len(attack_data):,} records")
+    st.caption("Run `python convert_excel_to_json.py` to generate `data/processed/excel_attack_data.json` from Excel dumps.")
 
     # 关键指标
     st.markdown("## 📊 实时监控指标")
@@ -143,7 +162,7 @@ if attack_data:
     # 统计威胁等级
     critical_count = len([a for a in attack_data if a.get('threat_level') == 'critical'])
     high_count = len([a for a in attack_data if a.get('threat_level') == 'high'])
-    accuracy = 98.73
+    accuracy = None
 
     with col1:
         st.markdown(f"""
@@ -164,20 +183,20 @@ if attack_data:
         """, unsafe_allow_html=True)
 
     with col3:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card">
-            <h2>{accuracy}%</h2>
-            <p>准确率</p>
-            <small>AI检测精度</small>
+            <h2>n/a</h2>
+            <p>Accuracy</p>
+            <small>Not measured in this demo</small>
         </div>
         """, unsafe_allow_html=True)
 
     with col4:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card">
-            <h2>0.8s</h2>
-            <p>响应时间</p>
-            <small>平均检测速度</small>
+            <h2>n/a</h2>
+            <p>Response time</p>
+            <small>Not measured in this demo</small>
         </div>
         """, unsafe_allow_html=True)
 
@@ -200,12 +219,18 @@ if attack_data:
                 'low': '低危'
             }.get(attack.get('threat_level', 'medium'), '中危')
 
+            payload_preview = html_lib.escape(str(attack.get('payload', 'N/A'))[:80])
+            attack_type = html_lib.escape(str(attack.get('attack_type', 'Unknown')))
+            source_ip = html_lib.escape(str(attack.get('source_ip', 'Unknown')))
+            target_ip = html_lib.escape(str(attack.get('target_ip', 'Unknown')))
+            timestamp = html_lib.escape(str(attack.get('timestamp', 'Unknown')))
+            data_source = html_lib.escape(str(attack.get('data_source', 'Unknown')))
             st.markdown(f"""
-            <div class="{alert_class}">
-                <strong>🚨 {attack.get('attack_type', 'Unknown')}</strong> | {attack.get('timestamp', 'Unknown')}<br>
-                <strong>来源:</strong> {attack.get('source_ip', 'Unknown')} → <strong>目标:</strong> {attack.get('target_ip', 'Unknown')}<br>
-                <strong>威胁等级:</strong> {threat_cn} | <strong>数据源:</strong> {attack.get('data_source', 'Unknown')}<br>
-                <strong>载荷:</strong> <code>{attack.get('payload', 'N/A')[:80]}...</code>
+            <div class="{html_lib.escape(alert_class)}">
+                <strong>{attack_type}</strong> | {timestamp}<br>
+                <strong>Source:</strong> {source_ip} → <strong>Target:</strong> {target_ip}<br>
+                <strong>Threat:</strong> {html_lib.escape(threat_cn)} | <strong>Source file:</strong> {data_source}<br>
+                <strong>Payload:</strong> <code>{payload_preview}</code>
             </div>
             """, unsafe_allow_html=True)
 
@@ -346,11 +371,24 @@ if attack_data:
         )
         st.plotly_chart(fig_sources, use_container_width=True)
 
-        # 时间分布
-        st.markdown("#### 24小时攻击分布")
+        st.markdown("#### 24-hour attack distribution")
         hours = list(range(24))
-        np.random.seed(42)
-        hourly_counts = np.random.poisson(lam=total_records/24, size=24).tolist()
+        hourly_counts = [0] * 24
+        for attack in attack_data:
+            raw_ts = str(attack.get('timestamp', ''))
+            hour = None
+            for fmt in ('%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S'):
+                try:
+                    hour = datetime.strptime(raw_ts[:19], fmt).hour
+                    break
+                except ValueError:
+                    continue
+            if hour is None:
+                try:
+                    hour = datetime.fromisoformat(raw_ts.replace('Z', '+00:00')).hour
+                except ValueError:
+                    continue
+            hourly_counts[hour] += 1
 
         fig_timeline = px.line(
             x=hours,

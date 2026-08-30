@@ -37,11 +37,11 @@ class IntelligentRouter:
         # 攻击类型关键词映射
         self.attack_keywords = {
             'web_attack': {
-                'sql_injection': ['select', 'drop', 'insert', 'update', 'delete', 'union', 'where', 'or', 'and', "'", '"', ';', '--', '/*', '*/'],
+                'sql_injection': ['select', 'drop', 'insert', 'update', 'delete', 'union', 'where', "'", '"', ';', '--', '/*', '*/', 'or 1=1', "or '1'='1"],
                 'xss': ['<script', 'javascript:', 'onerror=', 'onload=', 'alert(', 'document.cookie', '<img', '<iframe', '<svg'],
                 'command_injection': ['; ', '&& ', '|| ', '| ', '`', '$(', '${', 'eval', 'exec', 'system'],
                 'webshell': ['<?php', '<%', '<jsp:useBean', 'eval(', 'assert(', 'system(', 'passthru('],
-                'file_inclusion': ['../', '..\\', 'include', 'require', 'file://', 'http://', 'ftp://'],
+                'file_inclusion': ['../', '..\\', 'include', 'require', 'file://', 'php://', 'zip://'],
                 'ssrf': ['http://127.0.0.1', 'http://localhost', 'file:///', 'gopher://', 'dict://']
             },
             'vulnerability': {
@@ -84,7 +84,10 @@ class IntelligentRouter:
                 keyword_count = len(keywords)
 
                 for keyword in keywords:
-                    if keyword.lower() in text_content:
+                    token = keyword.lower()
+                    if len(token) <= 2 and token.isalpha():
+                        continue
+                    if token in text_content:
                         subcategory_score += 1
                         # 高权重关键词加权
                         if keyword in ["'", '"', ';', '--', '<script', 'eval', 'system']:
@@ -340,13 +343,28 @@ class EnhancedRouterAgent:
                     error_message="无法确定合适的路由"
                 )
 
-            # 构建路由结果
+            all_routes = self.intelligent_router.calculate_route_confidence(alert_data)
+            agent_to_route = {
+                'web_attack_expert': 'web_attack',
+                'vulnerability_expert': 'vulnerability_attack',
+                'illegal_connection_expert': 'illegal_connection',
+            }
+            selected_route = agent_to_route.get(optimal_route.target_agent, optimal_route.target_agent)
             result = {
-                'selected_route': optimal_route.target_agent,
+                'selected_route': selected_route,
+                'target_agent': optimal_route.target_agent,
                 'confidence': optimal_route.confidence,
                 'analysis': optimal_route.analysis,
                 'feature_scores': optimal_route.feature_scores,
-                'route_timestamp': time.time()
+                'route_timestamp': time.time(),
+                'route_confidences': [
+                    {
+                        'route': agent_to_route.get(item.target_agent, item.target_agent),
+                        'confidence': item.confidence,
+                        'analysis': item.analysis,
+                    }
+                    for item in all_routes
+                ],
             }
 
             return AgentResult(
@@ -374,6 +392,31 @@ class EnhancedRouterAgent:
         """更新路由性能反馈"""
         self.intelligent_router.update_performance_feedback(target_agent, success, accuracy)
 
+    def update_routing_accuracy(self, router_result, fusion_result):
+        """Compatibility wrapper used by MultiAgentSystem adaptive learning."""
+        success = True
+        accuracy = None
+        target_agent = None
+        if router_result is not None:
+            success = bool(getattr(router_result, "success", True))
+            payload = getattr(router_result, "result", {}) or {}
+            target_agent = payload.get("target_agent") or payload.get("selected_route")
+        if fusion_result is not None:
+            accuracy = getattr(fusion_result, "final_confidence", None)
+        if target_agent:
+            self.update_feedback(target_agent, success, accuracy)
+
     def get_statistics(self) -> Dict:
         """获取路由统计信息"""
         return self.intelligent_router.get_route_statistics()
+
+    def get_routing_statistics(self) -> Dict:
+        stats = self.get_statistics() or {}
+        if "accuracy" not in stats:
+            expert_perf = stats.get("expert_performance") or {}
+            rates = [item.get("success_rate", 0.0) for item in expert_perf.values() if isinstance(item, dict)]
+            stats["accuracy"] = sum(rates) / len(rates) if rates else stats.get("average_confidence", 0.0)
+        return stats
+
+    def get_metrics(self) -> Dict:
+        return self.get_routing_statistics()

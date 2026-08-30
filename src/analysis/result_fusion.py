@@ -64,6 +64,7 @@ class ExpertWeightManager:
 
     def update_expert_performance(self, expert_id: str, result: ExpertResult, success: bool, feedback_score: float = None):
         """更新专家性能数据"""
+        expert_id = self._canonical_expert_id(expert_id)
         perf = self.expert_performance[expert_id]
 
         # 更新基础统计
@@ -87,6 +88,7 @@ class ExpertWeightManager:
 
     def _adaptive_weight_adjustment(self, expert_id: str):
         """自适应权重调整"""
+        expert_id = self._canonical_expert_id(expert_id)
         perf = self.expert_performance[expert_id]
 
         if perf['total_requests'] < 5:  # 数据不足时暂不调整
@@ -119,9 +121,17 @@ class ExpertWeightManager:
         logger.info(f"专家 {expert_id} 权重调整: {current_weight:.3f} -> {new_weight:.3f} "
                    f"(成功率: {success_rate:.3f}, 置信度: {avg_confidence:.3f})")
 
+    def _canonical_expert_id(self, expert_id: str) -> str:
+        if expert_id in self.expert_weights:
+            return expert_id
+        for key in self.expert_weights:
+            if key in (expert_id or "") or (expert_id or "") in key:
+                return key
+        return expert_id
+
     def get_expert_weight(self, expert_id: str) -> float:
         """获取专家权重"""
-        return self.expert_weights.get(expert_id, 1.0)
+        return self.expert_weights.get(self._canonical_expert_id(expert_id), 1.0)
 
     def get_normalized_weights(self, expert_ids: List[str]) -> Dict[str, float]:
         """获取归一化权重"""

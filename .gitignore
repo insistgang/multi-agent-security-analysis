@@ -54,6 +54,7 @@ logs/
 data/processed/*.json
 data/*.xlsx
 data/*.xls
+data/uploads/
 
 # Streamlit cache
 .streamlit/

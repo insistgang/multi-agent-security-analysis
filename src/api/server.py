@@ -3,15 +3,17 @@
 API
 RESTful API
 """
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends, UploadFile, File, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from typing import Dict, List, Any, Optional
+import argparse
 import asyncio
 import time
 import uuid
 from datetime import datetime
+from pathlib import Path
 from loguru import logger
 import json
 
@@ -23,6 +25,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.agents.multi_agent_system import MultiAgentSystem
 from src.parsers.log_parser import AlertLogParser
 from src.rag.rag_enhanced_analyzer import RAGEnhancedAnalyzer
+from src.utils.path_guard import resolve_log_path, UnsafePathError, DEFAULT_DATA_DIR
 
 # 
 logger.add("logs/api_server.log", rotation="10 MB", level="INFO")
@@ -53,14 +56,42 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+API_KEY = os.getenv("API_KEY", "").strip()
+_cors_origins = [item.strip() for item in os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:7777,http://127.0.0.1:7777,http://localhost:8886,http://127.0.0.1:8886",
+).split(",") if item.strip()]
+if _cors_origins == ["*"]:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+
+async def require_api_key(
+    request: Request,
+    authorization: Optional[str] = Header(default=None),
+    x_api_key: Optional[str] = Header(default=None),
+):
+    """If API_KEY is set, require it on /api/v1/* except liveness."""
+    if not API_KEY:
+        return
+    provided = x_api_key
+    if not provided and authorization and authorization.lower().startswith("bearer "):
+        provided = authorization.split(" ", 1)[1].strip()
+    if provided != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
 # 
 multi_agent_system = None
@@ -117,12 +148,18 @@ async def initialize_system():
         # 
         log_parser = AlertLogParser()
 
-        logger.info("")
+        logger.info("System initialized")
         return True
 
     except Exception as e:
-        logger.warning(f": {e}")
-        # RAG
+        logger.warning(f"System initialization error: {e}")
+        if multi_agent_system is None or not getattr(multi_agent_system, "is_initialized", False):
+            logger.error("Multi-agent system failed to start")
+            return False
+        logger.warning("Continuing without RAG enhancement")
+        rag_analyzer = None
+        if log_parser is None:
+            log_parser = AlertLogParser()
         return True
 
 # 
@@ -181,11 +218,10 @@ def create_default_analysis_result(alert_data: Dict[str, Any]) -> Dict[str, Any]
         },
         'overall_assessment': {
             'risk_score': 5.0,
-            'threat_level': '',
+            'threat_level': 'medium',
             'recommended_actions': [
-                '',
-                '',
-                ''
+                'Record the event for trend analysis',
+                'Confirm the finding is not a scanner false positive',
             ]
         },
         'processing_chain': [
@@ -201,10 +237,9 @@ def create_default_analysis_result(alert_data: Dict[str, Any]) -> Dict[str, Any]
     }
 
 # 
-async def get_system_status():
-    """"""
+async def require_initialized_system():
     if not multi_agent_system or not multi_agent_system.is_initialized:
-        raise HTTPException(status_code=503, detail="")
+        raise HTTPException(status_code=503, detail="Multi-agent system is not initialized")
 
     return {
         'multi_agent_system': multi_agent_system.get_system_status(),
@@ -226,7 +261,8 @@ async def root():
 @app.post("/api/v1/analyze/alert", response_model=AnalysisResponse)
 async def analyze_single_alert(
     request: AlertAnalysisRequest,
-    background_tasks: BackgroundTasks
+    background_tasks: BackgroundTasks,
+    _: None = Depends(require_api_key),
 ):
     """"""
     request_id = str(uuid.uuid4())
@@ -367,7 +403,10 @@ async def analyze_single_alert(
         )
 
 @app.post("/api/v1/analyze/batch", response_model=List[AnalysisResponse])
-async def analyze_batch_alerts(request: BatchAnalysisRequest):
+async def analyze_batch_alerts(
+    request: BatchAnalysisRequest,
+    _: None = Depends(require_api_key),
+):
     """"""
     try:
         logger.info(f" {len(request.alert_list)} ")
@@ -430,16 +469,32 @@ async def analyze_batch_alerts(request: BatchAnalysisRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/parse/log")
-async def parse_log_file(file_path: str):
-    """"""
+async def parse_log_file(
+    file_path: Optional[str] = None,
+    file: Optional[UploadFile] = File(default=None),
+    _: None = Depends(require_api_key),
+):
+    """Parse an Excel/CSV log. Paths must resolve under data/; uploads are written there first."""
+    tmp_path = None
     try:
         if not log_parser:
-            raise HTTPException(status_code=503, detail="")
+            raise HTTPException(status_code=503, detail="Log parser is not initialized")
 
-        logger.info(f": {file_path}")
+        if file is not None:
+            suffix = Path(file.filename or "upload.xlsx").suffix.lower() or ".xlsx"
+            upload_dir = DEFAULT_DATA_DIR / "uploads"
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            tmp_path = upload_dir / f"{uuid.uuid4().hex}{suffix}"
+            content = await file.read()
+            tmp_path.write_bytes(content)
+            resolved = resolve_log_path(str(tmp_path))
+        elif file_path:
+            resolved = resolve_log_path(file_path)
+        else:
+            raise HTTPException(status_code=400, detail="Provide file_path under data/ or upload a file")
 
-        # 
-        parsed_alerts = log_parser.parse_excel_log(file_path)
+        logger.info(f"Parsing log: {resolved}")
+        parsed_alerts = log_parser.parse_excel_log(str(resolved))
 
         if not parsed_alerts:
             return {
@@ -471,12 +526,22 @@ async def parse_log_file(file_path: str):
             "alerts": alerts_dict[:100]  # 100
         }
 
+    except UnsafePathError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f": {e}")
+        logger.error(f"Log parse failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if tmp_path is not None:
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 @app.get("/api/v1/system/status", response_model=SystemStatusResponse)
-async def get_system_status():
+async def get_system_status_endpoint(_: None = Depends(require_api_key)):
     """"""
     try:
         # 
@@ -504,7 +569,7 @@ async def get_system_status():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/threat-intel/recent")
-async def get_recent_threat_intel(days: int = 7):
+async def get_recent_threat_intel(days: int = 7, _: None = Depends(require_api_key)):
     """"""
     try:
         if not rag_analyzer or not rag_analyzer.threat_retriever:
@@ -524,7 +589,7 @@ async def get_recent_threat_intel(days: int = 7):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/threat-intel/search")
-async def search_threat_intel(query: str, top_k: int = 5):
+async def search_threat_intel(query: str, top_k: int = 5, _: None = Depends(require_api_key)):
     """"""
     try:
         if not rag_analyzer or not rag_analyzer.threat_retriever:
@@ -545,7 +610,7 @@ async def search_threat_intel(query: str, top_k: int = 5):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/metrics")
-async def get_performance_metrics():
+async def get_performance_metrics(_: None = Depends(require_api_key)):
     """"""
     try:
         if not multi_agent_system:
@@ -592,7 +657,11 @@ async def log_analysis_result(request_id: str, alert_data: Dict[str, Any],
             "alert_type": alert_data.get("attack_type", "unknown"),
             "success": analysis_result.get("success", False),
             "processing_time": processing_time,
-            "risk_score": analysis_result.get("result", {}).get("overall_assessment", {}).get("risk_score", 0),
+            "risk_score": (
+                (analysis_result.get("overall_assessment") or {}).get("risk_score")
+                or ((analysis_result.get("result") or {}).get("overall_assessment") or {}).get("risk_score")
+                or 0
+            ),
             "timestamp": datetime.now().isoformat()
         }
 
@@ -631,17 +700,17 @@ async def global_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
 
-    # 
-    config = {
-        "host": "0.0.0.0",
-        "port": 8000,
-        "log_level": "info",
-        "access_log": True
-    }
+    parser = argparse.ArgumentParser(description="Network threat analysis API")
+    parser.add_argument("--host", default=os.getenv("API_HOST", "127.0.0.1"))
+    parser.add_argument("--port", type=int, default=int(os.getenv("API_PORT", "8000")))
+    parser.add_argument("--reload", action="store_true")
+    args = parser.parse_args()
 
-    # 
     uvicorn.run(
         "src.api.server:app",
-        reload=True,
-        **config
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+        log_level="info",
+        access_log=True,
     )

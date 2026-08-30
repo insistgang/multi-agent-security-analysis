@@ -59,6 +59,10 @@ class AlertLogParser:
             '高风险': 5,
             '中风险': 3,
             '低风险': 1,
+            'critical': 5,
+            'high': 5,
+            'medium': 3,
+            'low': 1,
             '高': 5,
             '中': 3,
             '低': 1
@@ -68,7 +72,13 @@ class AlertLogParser:
         """解析Excel格式的告警日志"""
         try:
             logger.info(f"开始解析Excel文件: {file_path}")
-            df = pd.read_excel(file_path)
+            suffix = str(file_path).lower()
+            if suffix.endswith(".csv"):
+                df = pd.read_csv(file_path)
+            elif suffix.endswith(".json"):
+                df = pd.read_json(file_path)
+            else:
+                df = pd.read_excel(file_path)
 
             parsed_alerts = []
             for idx, row in df.iterrows():
@@ -91,33 +101,33 @@ class AlertLogParser:
         """解析单行数据"""
         try:
             # 提取时间戳
-            timestamp_str = row.get('告警时间', '')
+            def _cell(*names):
+                for name in names:
+                    if name in row and pd.notna(row.get(name)):
+                        return row.get(name)
+                return ''
+
+            timestamp_str = _cell('告警时间', 'timestamp')
             timestamp = self._parse_timestamp(timestamp_str)
 
-            # 提取IP地址
-            source_ip = row.get('源IP', '')
-            target_ip = row.get('目标IP', '')
+            source_ip = _cell('源IP', 'source_ip')
+            target_ip = _cell('目标IP', 'target_ip')
 
-            # 提取攻击类型
-            primary_type = row.get('一级告警类型', '')
-            secondary_type = row.get('二级告警类型', '')
+            primary_type = _cell('一级告警类型', 'attack_type', '二级告警名称')
+            secondary_type = _cell('二级告警类型', '二级告警名称')
             attack_type = self._normalize_attack_type(primary_type, secondary_type)
 
-            # 提取攻击阶段
-            attack_stage = row.get('攻击阶段', '')
+            attack_stage = _cell('攻击阶段', 'attack_stage')
 
-            # 提取威胁等级
-            threat_level_raw = row.get('威胁等级', '')
+            threat_level_raw = _cell('威胁等级', 'threat_level', '告警等级')
             threat_level = self._normalize_threat_level(threat_level_raw)
 
-            # 提取协议
-            protocol = row.get('协议', '')
-            if pd.isna(protocol):
+            protocol = _cell('协议', 'protocol')
+            if pd.isna(protocol) or protocol == '':
                 protocol = 'UNKNOWN'
 
-            # 提取载荷
-            payload = row.get('载荷', '')
-            request_data = row.get('请求数据', '')
+            payload = _cell('载荷', '攻击载荷', 'payload')
+            request_data = _cell('请求数据', 'raw_log')
             full_payload = str(payload) if not pd.isna(payload) else ''
             if request_data and not pd.isna(request_data):
                 full_payload += f" | {request_data}"
@@ -152,10 +162,19 @@ class AlertLogParser:
                 return datetime.now()
 
             # 尝试多种时间格式
+            raw = str(timestamp_str).strip()
+            if raw.endswith('Z'):
+                raw = raw[:-1] + '+00:00'
+            try:
+                return datetime.fromisoformat(raw)
+            except ValueError:
+                pass
+
             formats = [
                 '%Y-%m-%d %H:%M:%S',
                 '%Y/%m/%d %H:%M:%S',
-                '%Y-%m-%d %H:%M:%S.%f'
+                '%Y-%m-%d %H:%M:%S.%f',
+                '%Y-%m-%dT%H:%M:%S',
             ]
 
             for fmt in formats:

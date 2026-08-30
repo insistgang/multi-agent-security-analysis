@@ -27,20 +27,13 @@ def safe_print(*args, **kwargs):
                 cleaned_args.append(str(arg))
         print(*cleaned_args, **kwargs)
 
-# 清理emoji字符，避免Windows GBK编码错误
-def clean_emoji_characters(text):
-    """清理emoji字符"""
-    if not isinstance(text, str):
-        text = str(text)
-    # 只保留ASCII字符和基本中文字符
-    return ''.join(c for c in text if ord(c) < 128)
-
 import time
 import torch
 from typing import Dict, List, Any, Optional
 from .base_agent import BaseAgent, AgentRole, AgentResult
 from src.analysis.hybrid_reasoning import HybridReasoningEngine, ReasoningResult
 from src.rag.enhanced_rag import EnhancedRAGAnalyzer
+from src.utils.text_sanitize import clean_emoji_characters
 
 # 简单日志器，处理编码问题
 class SimpleLogger:
@@ -226,34 +219,10 @@ Return in JSON format:
             safe_print("[EXPERT] Starting security analysis...")
             safe_print("="*70)
 
-            # Generate analysis prompt
-            prompt = self._generate_prompt(input_data)
-
-            # Call model
-            try:
-                model_analysis = self._call_model(prompt)
-
-                # Clean emoji characters
-                model_analysis_clean = clean_emoji_characters(model_analysis)
-
-                safe_print("[EXPERT] Model analysis result:")
-                safe_print(f"[EXPERT] Analysis: {model_analysis_clean[:200]}...")
-                safe_print("="*70)
-            except Exception as e:
-                # Clean emoji in error message
-                error_msg_clean = clean_emoji_characters(str(e))
-                safe_print(f"[ERROR] Model error: {error_msg_clean}")
-                safe_print("[FALLBACK] Using rule-based simulation")
-                model_analysis_clean = self._generate_smart_simulation(prompt)
-                safe_print("="*70)
-
-            # Hybrid reasoning
+            # Hybrid reasoning owns the LLM call so we do not construct a second GPU client.
             reasoning_result = self.hybrid_reasoning_engine.analyze(input_data)
-
-            # Convert reasoning result
             parsed_result = self._convert_reasoning_result(reasoning_result)
 
-            # RAG enhancement
             rag_enhancement = None
             if self.enable_rag and self.rag_analyzer:
                 try:
@@ -263,6 +232,7 @@ Return in JSON format:
                         'risk_score': reasoning_result.risk_score
                     }
                     rag_enhancement = self.rag_analyzer.enhance_analysis(input_data, base_analysis)
+                    parsed_result = self._apply_rag_enhancement(parsed_result, rag_enhancement)
                 except Exception as e:
                     logger.warning(f"RAG error: {e}")
                     rag_enhancement = {
@@ -273,13 +243,13 @@ Return in JSON format:
             processing_time = time.time() - start_time
             self.update_metrics(True, processing_time)
 
-            # Clean emoji in attack type
             attack_type_clean = clean_emoji_characters(str(input_data.get('attack_type', '')))
 
             self.log_action("Analysis completed", {
                 "attack_type": attack_type_clean,
                 "risk_score": parsed_result.get('risk_score', 0),
-                "processing_time": processing_time
+                "processing_time": processing_time,
+                "rag_applied": bool(rag_enhancement and rag_enhancement.get('success')),
             })
 
             return AgentResult(
@@ -324,11 +294,9 @@ Return in JSON format:
         """Call Qwen2-7B model for analysis"""
         safe_print(f"\n[EXPERT] Calling Qwen2-7B model...")
 
-        # Try GPU LLM inference first
         try:
-            from src.models.llm_inference_gpu import GPULLMInference
-            # GPU LLM
-            llm_inference = GPULLMInference()
+            from src.models.llm_inference_gpu import get_gpu_llm
+            llm_inference = get_gpu_llm()
         except Exception as e:
             safe_print(f"[ERROR] GPU LLM failed: {e}")
             from src.models.llm_inference import get_llm_inference
@@ -651,6 +619,42 @@ Return in JSON format:
             })
 
         return result
+
+    def _apply_rag_enhancement(self, parsed_result: Dict[str, Any], rag_enhancement: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        """Fold RAG risk/confidence/suggestion adjustments into the expert result."""
+        if not rag_enhancement or not rag_enhancement.get('success'):
+            return parsed_result
+
+        parsed_result['rag_enhancement'] = rag_enhancement
+        enhanced = rag_enhancement.get('enhanced_analysis') or {}
+        try:
+            risk_adjustment = float(enhanced.get('risk_adjustment', 0.0) or 0.0)
+        except (TypeError, ValueError):
+            risk_adjustment = 0.0
+        parsed_result['risk_score'] = min(
+            10.0,
+            max(0.0, float(parsed_result.get('risk_score', 5.0)) + risk_adjustment)
+        )
+
+        recs = enhanced.get('mitigation_recommendations') or []
+        if recs:
+            existing = list(parsed_result.get('defense_suggestions') or parsed_result.get('remediation') or [])
+            merged = []
+            seen = set()
+            for item in existing + list(recs):
+                if item and item not in seen:
+                    seen.add(item)
+                    merged.append(item)
+            parsed_result['defense_suggestions'] = merged[:8]
+
+        context = enhanced.get('additional_context') or []
+        if context:
+            parsed_result['rag_context'] = context[:5]
+
+        intel = rag_enhancement.get('threat_intelligence') or []
+        parsed_result['rag_intel_count'] = len(intel)
+        parsed_result['rag_sample_only'] = True
+        return parsed_result
 
     def _assess_web_threat(self, reasoning_result: ReasoningResult) -> str:
         """Assess web threat level"""

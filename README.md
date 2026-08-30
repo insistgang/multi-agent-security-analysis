@@ -22,7 +22,7 @@
 ## 🏗️ 项目结构
 
 ```
-pj2.0/
+multi-agent-security-analysis/
 ├── src/                          # 源代码目录
 │   ├── agents/                   # 智能体模块
 │   ├── analysis/                 # 分析引擎
@@ -53,8 +53,8 @@ pj2.0/
 
 1. 克隆项目
 ```bash
-git clone [项目地址]
-cd pj2.0
+git clone https://github.com/insistgang/multi-agent-security-analysis.git
+cd multi-agent-security-analysis
 ```
 
 2. 安装依赖
@@ -64,14 +64,32 @@ pip install -r requirements.txt
 
 3. 启动系统
 ```bash
-# 启动API服务
-python -m src.api.server --port 8000
+# API (default bind is 127.0.0.1:8000; pass --host 0.0.0.0 only if you intend to expose it)
+python -m src.api.server --host 127.0.0.1 --port 8000
 
-# 启动Web应用
+# Optional: require a key on /api/v1/*
+# export API_KEY=your-secret
+# export CORS_ORIGINS=http://localhost:7777,http://localhost:8886
+
+# Web application (calls the API)
 cd web_app && streamlit run app.py --server.port 7777
 
-# 启动演示系统
+# Demo dashboard (does not call the API)
 cd web_demo && streamlit run excel_final.py --server.port 8886
+```
+
+Analyze endpoint body is nested:
+
+```json
+{
+  "alert_data": {
+    "attack_type": "SQL Injection",
+    "payload": "' UNION SELECT * FROM users --",
+    "source_ip": "192.168.1.200",
+    "target_ip": "10.0.0.10"
+  },
+  "enable_rag_enhancement": true
+}
 ```
 
 ## 📊 演示系统
@@ -82,8 +100,8 @@ cd web_demo && streamlit run excel_final.py --server.port 8886
 - 数据：13,926条真实攻击记录
 
 ### 多智能体协同分析
-- 地址：http://localhost:4444
-- 功能：切换数据源，智能体协同分析
+- 地址：http://localhost:7777 (`web_app/app.py`)
+- 功能：单条/批量告警分析，依赖已启动的 API
 
 ## 📈 数据支持
 
@@ -99,7 +117,7 @@ cd web_demo && streamlit run excel_final.py --server.port 8886
 python3 -m unittest discover -s tests -v
 ```
 
-当前测试覆盖同步/异步熔断器装饰器中的异步等待、重试和异常传播行为。
+当前测试覆盖熔断器行为、规则引擎、路由关键词、路径允许列表和威胁等级判定。
 
 后续可移植性、安全和测试改进见 [`docs/IMPROVEMENT_ROADMAP.md`](docs/IMPROVEMENT_ROADMAP.md)。
 

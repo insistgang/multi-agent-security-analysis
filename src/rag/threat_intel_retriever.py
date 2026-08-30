@@ -86,7 +86,10 @@ class ThreatIntelRetriever:
         except Exception:
             self.collection = self.vector_db.create_collection(
                 name=self.collection_name,
-                metadata={"description": "网络安全威胁情报集合"}
+                metadata={
+                    "hnsw:space": "cosine",
+                    "description": "网络安全威胁情报集合（示例数据）",
+                }
             )
             logger.info("创建新的威胁情报集合")
 
@@ -320,7 +323,8 @@ class ThreatIntelRetriever:
         for i, (doc, metadata, distance) in enumerate(zip(documents, metadatas, distances)):
             intel_result = {
                 'rank': i + 1,
-                'similarity_score': 1 - distance,  # 转换为相似度分数
+                'similarity_score': max(0.0, 1 - float(distance)),
+                'sample_data': True,
                 'intel_id': metadata.get('intel_id'),
                 'threat_type': metadata.get('threat_type'),
                 'description': doc,

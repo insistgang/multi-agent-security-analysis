@@ -6,22 +6,48 @@ No simulation allowed!
 import json
 import time
 import logging
+import threading
+from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import os
 
 logger = logging.getLogger(__name__)
 
-# Global variables
 _GLOBAL_MODEL = None
 _GLOBAL_TOKENIZER = None
 _MODEL_LOADED = False
+_INFERENCE_LOCK = threading.Lock()
+
+
+def _load_model_settings():
+    defaults = {
+        "model_path": "./models/Qwen2-7B",
+        "trust_remote_code": True,
+    }
+    config_path = Path("config/model_config.json")
+    if not config_path.is_file():
+        return defaults
+    try:
+        with config_path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        model_cfg = payload.get("model_config", payload)
+        defaults["model_path"] = model_cfg.get("model_path", defaults["model_path"])
+        defaults["trust_remote_code"] = bool(model_cfg.get("trust_remote_code", True))
+        return defaults
+    except Exception as exc:
+        logger.warning("Failed to read model config, using defaults: %s", exc)
+        return defaults
 
 class LLMInference:
     """Real model inference engine"""
 
     def __init__(self):
         global _GLOBAL_MODEL, _GLOBAL_TOKENIZER, _MODEL_LOADED
+
+        settings = _load_model_settings()
+        self.model_path = settings["model_path"]
+        self.trust_remote_code = settings["trust_remote_code"]
 
         if _MODEL_LOADED:
             print("[OK] Using already loaded model")
@@ -34,7 +60,6 @@ class LLMInference:
         print("[STARTUP] Starting Real Qwen2-7B Model Loading Process")
         print("="*70)
 
-        self.model_path = "./models/Qwen2-7B"
         self.device = "cpu"
 
         # Force loading
@@ -65,7 +90,7 @@ class LLMInference:
             print("\n[1/3] Loading Tokenizer...")
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.model_path,
-                trust_remote_code=True
+                trust_remote_code=self.trust_remote_code
             )
 
             if self.tokenizer.pad_token is None:
@@ -79,7 +104,7 @@ class LLMInference:
 
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_path,
-                trust_remote_code=True,
+                trust_remote_code=self.trust_remote_code,
                 torch_dtype=torch.float32,
                 low_cpu_mem_usage=True
             )
@@ -133,18 +158,18 @@ class LLMInference:
 
             # Encode
             inputs = self.tokenizer.encode(prompt, return_tensors="pt", truncation=True, max_length=512)
-            inputs = inputs.to(self.device)
 
-            # Inference
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    inputs,
-                    max_new_tokens=max_new_tokens,
-                    temperature=temperature,
-                    do_sample=True,
-                    pad_token_id=self.tokenizer.pad_token_id,
-                    eos_token_id=self.tokenizer.eos_token_id
-                )
+            with _INFERENCE_LOCK:
+                inputs = inputs.to(self.device)
+                with torch.no_grad():
+                    outputs = self.model.generate(
+                        inputs,
+                        max_new_tokens=max_new_tokens,
+                        temperature=temperature,
+                        do_sample=True,
+                        pad_token_id=self.tokenizer.pad_token_id,
+                        eos_token_id=self.tokenizer.eos_token_id
+                    )
 
             # Decode
             response = self.tokenizer.decode(outputs[0][inputs.shape[1]:], skip_special_tokens=True)

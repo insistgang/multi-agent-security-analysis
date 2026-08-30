@@ -13,10 +13,8 @@ from .router_agent import RouterAgent
 from .expert_agent import ExpertAgent
 from .intelligent_router import EnhancedRouterAgent
 from src.analysis.result_fusion import ResultFusionEngine, ExpertResult, FusionResult
-# from ..utils.error_handler import (
-#     with_circuit_breaker, with_retry, with_fallback,
-#     global_error_handler, CircuitBreakerConfig
-# )
+from src.analysis.assessment import determine_threat_level, recommended_actions
+from src.utils.error_handler import global_error_handler
 from loguru import logger
 
 class MultiAgentSystem:
@@ -52,19 +50,18 @@ class MultiAgentSystem:
                 return False
             self.agents[self.router.agent_id] = self.router
 
-            # 
-            # self.enhanced_router = EnhancedRouterAgent(self.config.get('enhanced_router', {}))
-            # if not self.enhanced_router.initialize():
-            #     logger.warning("")
-            # else:
-            #     self.agents[self.enhanced_router.agent_id] = self.enhanced_router
-            #     logger.info("")
-            self.enhanced_router = None
+            self.enhanced_router = EnhancedRouterAgent(
+                "enhanced_router",
+                self.config.get('enhanced_router', {}),
+            )
+            if not self.enhanced_router.initialize():
+                logger.warning("Enhanced router failed to initialize; using basic router")
+                self.enhanced_router = None
+            else:
+                logger.info("Enhanced router initialized")
 
-            # 
-            # self.result_fusion_engine = ResultFusionEngine(self.config.get('result_fusion', {}))
-            # logger.info("")
-            self.result_fusion_engine = None
+            self.result_fusion_engine = ResultFusionEngine(self.config.get('result_fusion', {}))
+            logger.info("Result fusion engine initialized")
 
             # 
             expert_configs = {
@@ -105,7 +102,7 @@ class MultiAgentSystem:
                 routing_result = await self._safe_intelligent_routing(alert_data)
                 router_result = AgentResult(
                     agent_id=self.enhanced_router.agent_id,
-                    agent_role="enhanced_router",
+                    agent_role=AgentRole.ROUTER,
                     success=True,
                     confidence=routing_result.get('overall_confidence', 0.0),
                     result=routing_result,
@@ -202,27 +199,24 @@ class MultiAgentSystem:
             # 
             selected_experts = list(self.experts.values())
 
-        # 
-        expert_tasks = []
-        for expert in selected_experts:
-            task = asyncio.create_task(
-                self._run_expert_analysis_async(expert, alert_data)
-            )
-            expert_tasks.append(task)
+        expert_tasks = [
+            self._run_expert_analysis_async(expert, alert_data)
+            for expert in selected_experts
+        ]
 
-        # 
+        completed = await asyncio.gather(*expert_tasks, return_exceptions=True)
         expert_results = []
-        for task in asyncio.as_completed(expert_tasks):
-            try:
-                result = await task
-                if result.success:
-                    expert_results.append(result)
-                    logger.debug(f" {result.agent_id} : {result.confidence:.3f}")
-                else:
-                    logger.warning(f" {result.agent_id} : {result.error_message}")
-            except Exception as e:
-                logger.error(f": {e}")
+        for result in completed:
+            if isinstance(result, Exception):
+                logger.error(f"Expert analysis failed: {result}")
+                continue
+            if result.success:
+                expert_results.append(result)
+                logger.debug(f"{result.agent_id} confidence={result.confidence:.3f}")
+            else:
+                logger.warning(f"{result.agent_id} failed: {result.error_message}")
 
+        expert_results.sort(key=lambda item: item.agent_id)
         return expert_results
 
     async def _run_expert_analysis_async(self, expert: ExpertAgent,
@@ -231,7 +225,19 @@ class MultiAgentSystem:
         # 
         import asyncio
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, expert.process, alert_data)
+
+        def _invoke():
+            breaker_name = {
+                AgentRole.WEB_ATTACK_EXPERT: "web_expert",
+                AgentRole.VULNERABILITY_EXPERT: "vulnerability_expert",
+                AgentRole.ILLEGAL_CONNECTION_EXPERT: "connection_expert",
+            }.get(expert.role)
+            breaker = global_error_handler.get_circuit_breaker(breaker_name) if breaker_name else None
+            if breaker:
+                return breaker.call(expert.process, alert_data)
+            return expert.process(alert_data)
+
+        return await loop.run_in_executor(None, _invoke)
 
     def _select_experts_by_routing(self, router_result: AgentResult) -> List[ExpertAgent]:
         """"""
@@ -269,9 +275,8 @@ class MultiAgentSystem:
                            alert_data: Dict[str, Any]) -> FusionResult:
         """"""
         if not self.result_fusion_engine:
-            # 
             if expert_results:
-                result = expert_results[0]
+                result = max(expert_results, key=lambda item: item.confidence)
                 return FusionResult(
                     final_attack_type=result.result.get('attack_type', 'unknown'),
                     final_confidence=result.confidence,
@@ -299,36 +304,53 @@ class MultiAgentSystem:
         # AgentResultExpertResult
         expert_result_objects = []
         for agent_result in expert_results:
+            role = agent_result.agent_role
+            role_value = role.value if hasattr(role, "value") else str(role)
             expert_result = ExpertResult(
                 expert_id=agent_result.agent_id,
-                expert_role=agent_result.agent_role,
+                expert_role=role_value,
                 attack_type=agent_result.result.get('attack_type', 'unknown'),
                 confidence=agent_result.confidence,
                 risk_score=agent_result.result.get('risk_score', 5.0),
                 processing_time=agent_result.processing_time,
-                analysis_details=agent_result.result.get('analysis', ''),
+                analysis_details=agent_result.result.get('analysis', '') or agent_result.result.get('detailed_analysis', ''),
                 evidence=agent_result.result.get('evidence', []),
                 timestamp=time.time()
             )
             expert_result_objects.append(expert_result)
 
-        # 
         return self.result_fusion_engine.fuse_results(expert_result_objects)
 
     async def _safe_intelligent_routing(self, alert_data: Dict[str, Any]) -> Dict[str, Any]:
-        """"""
+        """Run EnhancedRouterAgent.route_alert and unwrap AgentResult into a dict."""
         try:
-            return await asyncio.get_event_loop().run_in_executor(
-                None, self.enhanced_router.route_alert, alert_data
+            breaker = global_error_handler.get_circuit_breaker("intelligent_router")
+            routed = await asyncio.get_event_loop().run_in_executor(
+                None,
+                (lambda: breaker.call(self.enhanced_router.route_alert, alert_data) if breaker
+                 else self.enhanced_router.route_alert(alert_data)),
             )
+            if isinstance(routed, AgentResult):
+                if not routed.success:
+                    raise RuntimeError(routed.error_message or "intelligent routing failed")
+                payload = dict(routed.result or {})
+                payload.setdefault("route_confidences", [{
+                    "route": payload.get("selected_route", "web_attack"),
+                    "confidence": routed.confidence,
+                }])
+                payload.setdefault("overall_confidence", routed.confidence)
+                return payload
+            if isinstance(routed, dict):
+                return routed
+            raise TypeError(f"unexpected routing result type: {type(routed)!r}")
         except Exception as e:
-            logger.error(f": {e}")
-            # 
+            logger.error(f"Intelligent routing failed: {e}")
             return {
                 'route_confidences': [
                     {'route': 'web_attack', 'confidence': 0.5}
                 ],
                 'overall_confidence': 0.5,
+                'selected_route': 'web_attack',
                 'routing_details': {'error': str(e)}
             }
 
@@ -368,10 +390,10 @@ class MultiAgentSystem:
             logger.error(f": {e}")
             # 
             if expert_results:
-                result = expert_results[0]
+                result = max(expert_results, key=lambda item: item.confidence)
                 return FusionResult(
                     final_attack_type=result.result.get('attack_type', 'unknown'),
-                    final_confidence=result.confidence * 0.5,  # 
+                    final_confidence=result.confidence * 0.5,
                     final_risk_score=result.result.get('risk_score', 5.0),
                     consensus_level=0.5,
                     conflict_resolution="fallback",
@@ -417,14 +439,16 @@ class MultiAgentSystem:
             if self.result_fusion_engine and expert_results:
                 expert_result_objects = []
                 for agent_result in expert_results:
+                    role = agent_result.agent_role
+                    role_value = role.value if hasattr(role, "value") else str(role)
                     expert_result = ExpertResult(
                         expert_id=agent_result.agent_id,
-                        expert_role=agent_result.agent_role,
+                        expert_role=role_value,
                         attack_type=agent_result.result.get('attack_type', 'unknown'),
                         confidence=agent_result.confidence,
                         risk_score=agent_result.result.get('risk_score', 5.0),
                         processing_time=agent_result.processing_time,
-                        analysis_details=agent_result.result.get('analysis', ''),
+                        analysis_details=agent_result.result.get('analysis', '') or agent_result.result.get('detailed_analysis', ''),
                         evidence=agent_result.result.get('evidence', []),
                         timestamp=time.time()
                     )
@@ -450,28 +474,26 @@ class MultiAgentSystem:
         payload = alert_data.get('payload', '').lower()
         raw_log = alert_data.get('raw_log', '').lower()
 
-        risk_score = 5.0  # 
+        risk_score = 5.0
         attack_type = 'unknown'
-        threat_level = ''
 
         if any(keyword in payload or keyword in raw_log for keyword in [
             'union select', 'or 1=1', 'drop table', 'insert into'
         ]):
             attack_type = 'sql_injection'
             risk_score = 8.0
-            threat_level = ''
         elif any(keyword in payload or keyword in raw_log for keyword in [
             '<script', 'javascript:', 'onerror=', 'onload='
         ]):
             attack_type = 'xss'
             risk_score = 7.0
-            threat_level = ''
         elif any(keyword in payload or keyword in raw_log for keyword in [
             'wget', 'curl', 'nc ', 'netcat', 'powershell'
         ]):
             attack_type = 'command_injection'
             risk_score = 9.0
-            threat_level = ''
+
+        threat_level = determine_threat_level(risk_score)
 
         return {
             'success': True,
@@ -515,24 +537,7 @@ class MultiAgentSystem:
         }
 
     def _generate_fallback_actions(self, attack_type: str, risk_score: float) -> List[str]:
-        """"""
-        if risk_score >= 8.0:
-            return [
-                'IP',
-                '',
-                ''
-            ]
-        elif risk_score >= 6.0:
-            return [
-                '',
-                '',
-                ''
-            ]
-        else:
-            return [
-                '',
-                ''
-            ]
+        return recommended_actions(attack_type, risk_score, confidence=0.5)
 
     def _build_enhanced_final_result(self, alert_data: Dict[str, Any],
                                    router_result: AgentResult,
@@ -579,7 +584,7 @@ class MultiAgentSystem:
             if expert_result.success:
                 final_result['expert_analysis']['expert_results'].append({
                     'agent_id': expert_result.agent_id,
-                    'agent_role': expert_result.agent_role,
+                    'agent_role': expert_result.agent_role.value if hasattr(expert_result.agent_role, 'value') else str(expert_result.agent_role),
                     'confidence': expert_result.confidence,
                     'risk_score': expert_result.result.get('risk_score', 5.0),
                     'attack_type': expert_result.result.get('attack_type', 'unknown'),
@@ -619,71 +624,25 @@ class MultiAgentSystem:
         return final_result
 
     def _determine_threat_level(self, risk_score: float) -> str:
-        """"""
-        if risk_score >= 8.0:
-            return ''
-        elif risk_score >= 6.0:
-            return ''
-        elif risk_score >= 4.0:
-            return ''
-        else:
-            return ''
+        return determine_threat_level(risk_score)
 
     def _generate_recommended_actions(self, fusion_result: FusionResult) -> List[str]:
-        """"""
-        risk_score = fusion_result.final_risk_score
-        confidence = fusion_result.final_confidence
-        attack_type = fusion_result.final_attack_type
-
-        actions = []
-
-        # 
-        if risk_score >= 8.0 and confidence > 0.7:
-            actions.extend([
-                'IP',
-                '',
-                '',
-                ''
-            ])
-        elif risk_score >= 6.0:
-            actions.extend([
-                '',
-                '',
-                '',
-                ''
-            ])
-        elif risk_score >= 4.0:
-            actions.extend([
-                '',
-                '',
-                '',
-                ''
-            ])
-        else:
-            actions.extend([
-                '',
-                '',
-                ''
-            ])
-
-        # 
-        if 'sql' in attack_type.lower():
-            actions.extend(['', 'Web'])
-        elif 'xss' in attack_type.lower():
-            actions.extend(['Web', ''])
-        elif 'command' in attack_type.lower() or 'rce' in attack_type.lower():
-            actions.extend(['', '', ''])
-        elif 'scan' in attack_type.lower():
-            actions.extend(['', ''])
-
-        return actions
+        return recommended_actions(
+            fusion_result.final_attack_type,
+            fusion_result.final_risk_score,
+            fusion_result.final_confidence,
+        )
 
     def _get_expert_agent(self, route: str) -> Optional[ExpertAgent]:
         """"""
         route_mapping = {
             'web_attack': AgentRole.WEB_ATTACK_EXPERT,
+            'web_attack_expert': AgentRole.WEB_ATTACK_EXPERT,
+            'vulnerability': AgentRole.VULNERABILITY_EXPERT,
             'vulnerability_attack': AgentRole.VULNERABILITY_EXPERT,
-            'illegal_connection': AgentRole.ILLEGAL_CONNECTION_EXPERT
+            'vulnerability_expert': AgentRole.VULNERABILITY_EXPERT,
+            'illegal_connection': AgentRole.ILLEGAL_CONNECTION_EXPERT,
+            'illegal_connection_expert': AgentRole.ILLEGAL_CONNECTION_EXPERT,
         }
 
         expert_role = route_mapping.get(route)
@@ -752,38 +711,14 @@ class MultiAgentSystem:
         final_result['overall_assessment']['risk_score'] = risk_score
 
         # 
-        if risk_score >= 8.0:
-            threat_level = ''
-        elif risk_score >= 6.0:
-            threat_level = ''
-        else:
-            threat_level = ''
-
+        threat_level = determine_threat_level(risk_score)
         final_result['overall_assessment']['threat_level'] = threat_level
 
-        # 
-        recommended_actions = []
-
-        if risk_score >= 8.0 and false_positive_prob < 0.3:
-            recommended_actions.extend([
-                'IP',
-                '',
-                ''
-            ])
-        elif risk_score >= 6.0:
-            recommended_actions.extend([
-                '',
-                '',
-                ''
-            ])
-        else:
-            recommended_actions.extend([
-                '',
-                '',
-                ''
-            ])
-
-        final_result['overall_assessment']['recommended_actions'] = recommended_actions
+        confidence = max(0.0, 1.0 - float(false_positive_prob or 0.5))
+        attack_type = expert_result.get('attack_type', '')
+        final_result['overall_assessment']['recommended_actions'] = recommended_actions(
+            attack_type, risk_score, confidence
+        )
 
     def _update_performance_metrics(self, success: bool, processing_time: float):
         """"""
@@ -840,7 +775,7 @@ class MultiAgentSystem:
             'available_experts': [role.value for role in self.experts.keys()],
             'performance_metrics': self.performance_metrics,
             'individual_agent_metrics': {
-                agent_id: agent.get_metrics()
+                agent_id: agent.get_metrics() if hasattr(agent, 'get_metrics') else {}
                 for agent_id, agent in self.agents.items()
             }
         }

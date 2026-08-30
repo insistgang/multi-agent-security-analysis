@@ -10,38 +10,67 @@ import sys
 import time
 import json
 import logging
+import threading
+from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-# 强制设置编码环境
 os.environ['PYTHONIOENCODING'] = 'utf-8'
 os.environ['PYTHONLEGACYWINDOWSSTDIO'] = '0'
 
 logger = logging.getLogger(__name__)
 
-# 全局变量
 _GLOBAL_MODEL = None
 _GLOBAL_TOKENIZER = None
+_GLOBAL_DEVICE = None
 _MODEL_LOADED = False
+_INFERENCE_LOCK = threading.Lock()
+
+
+def _load_model_settings():
+    """Read config/model_config.json when present; fall back to repo defaults."""
+    defaults = {
+        "model_path": "./models/Qwen2-7B",
+        "trust_remote_code": True,
+    }
+    config_path = Path("config/model_config.json")
+    if not config_path.is_file():
+        return defaults
+    try:
+        with config_path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        model_cfg = payload.get("model_config", payload)
+        defaults["model_path"] = model_cfg.get("model_path", defaults["model_path"])
+        defaults["trust_remote_code"] = bool(model_cfg.get("trust_remote_code", True))
+        if defaults["trust_remote_code"]:
+            logger.warning("trust_remote_code=True: loading custom model code from %s", defaults["model_path"])
+        return defaults
+    except Exception as exc:
+        logger.warning("Failed to read model config, using defaults: %s", exc)
+        return defaults
+
 
 class GPULLMInference:
     """GPU优化版LLM推理引擎"""
 
     def __init__(self):
-        global _GLOBAL_MODEL, _GLOBAL_TOKENIZER, _MODEL_LOADED
+        global _GLOBAL_MODEL, _GLOBAL_TOKENIZER, _GLOBAL_DEVICE, _MODEL_LOADED
+
+        settings = _load_model_settings()
+        self.model_path = settings["model_path"]
+        self.trust_remote_code = settings["trust_remote_code"]
 
         if _MODEL_LOADED:
             print("[GPU] 使用已加载的模型")
             self.model = _GLOBAL_MODEL
             self.tokenizer = _GLOBAL_TOKENIZER
+            self.device = _GLOBAL_DEVICE or ("cuda" if torch.cuda.is_available() else "cpu")
             return
 
         print("\n" + "="*80)
         print("[GPU] 启动GPU优化版 Qwen2-7B 模型加载")
         print("[GPU] 专为RTX 4070s 12G显卡优化")
         print("="*80)
-
-        self.model_path = "./models/Qwen2-7B"
 
         # 检查GPU可用性
         if not torch.cuda.is_available():
@@ -64,6 +93,7 @@ class GPULLMInference:
 
         _GLOBAL_MODEL = self.model
         _GLOBAL_TOKENIZER = self.tokenizer
+        _GLOBAL_DEVICE = self.device
         _MODEL_LOADED = True
 
         print("="*80)
@@ -86,7 +116,7 @@ class GPULLMInference:
             print("\n[1/3] 加载Tokenizer...")
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.model_path,
-                trust_remote_code=True,
+                trust_remote_code=self.trust_remote_code,
                 use_fast=True
             )
 
@@ -102,7 +132,7 @@ class GPULLMInference:
 
             # GPU优化配置
             model_kwargs = {
-                "trust_remote_code": True,
+                "trust_remote_code": self.trust_remote_code,
                 "low_cpu_mem_usage": True,
                 "device_map": "auto" if self.device == "cuda" else None,
             }
@@ -172,7 +202,10 @@ class GPULLMInference:
 
     def generate_response(self, prompt: str, max_new_tokens: int = 256, temperature: float = 0.7) -> str:
         """生成响应 - 强制使用真实模型"""
-        global _MODEL_LOADED
+        global _MODEL_LOADED, _GLOBAL_DEVICE
+
+        if not getattr(self, "device", None):
+            self.device = _GLOBAL_DEVICE or ("cuda" if torch.cuda.is_available() else "cpu")
 
         print("\n" + "="*80)
         print("[GPU] 开始真实模型推理")
@@ -187,7 +220,6 @@ class GPULLMInference:
             start_time = time.time()
             print(f"[INFERENCE] 开始推理 (max_tokens={max_new_tokens}, temperature={temperature})")
 
-            # 编码输入
             inputs = self.tokenizer(
                 prompt,
                 return_tensors="pt",
@@ -196,10 +228,6 @@ class GPULLMInference:
                 padding=True
             )
 
-            # 移动到GPU
-            inputs = {k: v.to(self.device) for k, v in inputs.items()}
-
-            # 生成参数优化
             generation_config = {
                 "max_new_tokens": max_new_tokens,
                 "temperature": temperature,
@@ -211,14 +239,14 @@ class GPULLMInference:
                 "repetition_penalty": 1.1,
             }
 
-            # GPU推理
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    **inputs,
-                    **generation_config
-                )
+            with _INFERENCE_LOCK:
+                inputs = {k: v.to(self.device) for k, v in inputs.items()}
+                with torch.no_grad():
+                    outputs = self.model.generate(
+                        **inputs,
+                        **generation_config
+                    )
 
-            # 解码结果
             response = self.tokenizer.decode(
                 outputs[0][inputs['input_ids'].shape[1]:],
                 skip_special_tokens=True
@@ -250,9 +278,10 @@ def get_gpu_llm():
     """获取GPU LLM实例"""
     global _gpu_llm_instance
 
-    if _gpu_llm_instance is None:
-        print("[INIT] 创建GPU LLM实例...")
-        _gpu_llm_instance = GPULLMInference()
+    with _INFERENCE_LOCK:
+        if _gpu_llm_instance is None:
+            print("[INIT] 创建GPU LLM实例...")
+            _gpu_llm_instance = GPULLMInference()
 
     return _gpu_llm_instance
 

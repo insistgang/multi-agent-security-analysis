@@ -28,7 +28,7 @@ if sys.platform.startswith('win'):
     if hasattr(sys.stdout, 'buffer'):
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     if hasattr(sys.stderr, 'buffer'):
-        sys.stderr = io.TextIOWWrapper(sys.stderr.buffer, encoding='utf-8')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 def safe_print(*args, **kwargs):
     """安全的打印函数，避免编码错误"""

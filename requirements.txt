@@ -19,6 +19,7 @@ peft==0.7.1
 fastapi==0.104.1
 uvicorn==0.24.0
 streamlit==1.29.0
+plotly==5.18.0
 pydantic==2.5.0
 
 # 数据处理
@@ -40,7 +41,7 @@ passlib[bcrypt]==1.7.4
 # 监控和日志
 loguru==0.7.2
 psutil==5.9.6
- GPUtil==1.4.0
+GPUtil==1.4.0
 
 # 开发工具
 pytest==7.4.3

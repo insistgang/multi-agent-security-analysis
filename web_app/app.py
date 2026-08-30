@@ -24,8 +24,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# API
 API_BASE_URL = "http://localhost:8000"
+
+PAGE_OVERVIEW = "System Overview"
+PAGE_SINGLE = "Single Alert Analysis"
+PAGE_BATCH = "Batch Analysis"
+PAGE_STATS = "Statistics"
+PAGE_INTEL = "Threat Intelligence"
+PAGE_SETTINGS = "Settings"
+
+
+def _threat_bucket(threat_level: str) -> str:
+    level = str(threat_level or "").strip().lower()
+    if level in {"critical", "high", "高危", "严重", "高风险"}:
+        return "high"
+    if level in {"medium", "中危", "中风险"}:
+        return "medium"
+    if level in {"low", "低危", "低风险"}:
+        return "low"
+    return "unknown"
 
 # CSS
 st.markdown("""
@@ -131,14 +148,14 @@ def render_sidebar():
     st.sidebar.title("")
 
     page = st.sidebar.selectbox(
-        "",
+        "Page",
         [
-            " ",
-            " ",
-            " ",
-            " ",
-            "🧠 ",
-            " "
+            PAGE_OVERVIEW,
+            PAGE_SINGLE,
+            PAGE_BATCH,
+            PAGE_STATS,
+            PAGE_INTEL,
+            PAGE_SETTINGS,
         ]
     )
 
@@ -281,32 +298,29 @@ def render_single_analysis():
     with col1:
         # 
         attack_type = st.selectbox(
-            "",
-            ["SQL", "XSS", "Web", "", "", ""]
+            "Attack type",
+            ["SQL Injection", "XSS", "Web Attack", "Command Injection", "Directory Traversal", "Illegal Connection"]
         )
 
-        # 
         attack_stage = st.selectbox(
-            "",
-            ["", "", "", "", "", "", ""]
+            "Attack stage",
+            ["reconnaissance", "weaponization", "delivery", "exploitation", "installation", "command_and_control", "actions"]
         )
 
-        # 
         threat_level = st.selectbox(
-            "",
-            ["", "", ""]
+            "Threat level",
+            ["critical", "high", "medium", "low"]
         )
 
-        # 
         protocol = st.selectbox(
-            "",
-            ["HTTP", "HTTPS", "DNS", "TCP", "UDP", ""]
+            "Protocol",
+            ["HTTP", "HTTPS", "DNS", "TCP", "UDP", "OTHER"]
         )
 
     with col2:
         # IP
-        source_ip = st.text_input("IP", "192.168.1.100")
-        target_ip = st.text_input("IP", "10.0.0.1")
+        source_ip = st.text_input("Source IP", "192.168.1.100")
+        target_ip = st.text_input("Target IP", "10.0.0.1")
 
         # 
         timestamp = st.text_input(
@@ -316,9 +330,9 @@ def render_single_analysis():
 
     # 
     payload = st.text_area(
-        "",
+        "Payload",
         height=150,
-        placeholder="..."
+        placeholder="Paste the alert payload or request snippet"
     )
 
     # 
@@ -443,12 +457,13 @@ def render_analysis_result(analysis_result: Dict):
                         risk_score_float = 0.0
                 else:
                     # 
-                    if "" in threat_level:
-                        risk_score_float = 8.5  # 8.5
-                    elif "" in threat_level:
-                        risk_score_float = 5.0  # 5.0
-                    elif "" in threat_level:
-                        risk_score_float = 2.0  # 2.0
+                    bucket = _threat_bucket(threat_level)
+                    if bucket == "high":
+                        risk_score_float = 8.5
+                    elif bucket == "medium":
+                        risk_score_float = 5.0
+                    elif bucket == "low":
+                        risk_score_float = 2.0
                     else:
                         # risk_score
                         if isinstance(risk_score, str):
@@ -461,21 +476,23 @@ def render_analysis_result(analysis_result: Dict):
                 st.metric("", f"{risk_score_float:.1f}/10")
             except (ValueError, TypeError):
                 # 
-                if "" in threat_level:
-                    st.metric("", "8.5/10")
-                elif "" in threat_level:
-                    st.metric("", "5.0/10")
+                bucket = _threat_bucket(threat_level)
+                if bucket == "high":
+                    st.metric("Risk score", "8.5/10")
+                elif bucket == "medium":
+                    st.metric("Risk score", "5.0/10")
                 else:
-                    st.metric("", "2.0/10")
+                    st.metric("Risk score", "2.0/10")
 
         with col2:
             threat_level = overall_assessment.get("threat_level", "")
-            if "" in threat_level:
-                st.error(f": {threat_level}")
-            elif "" in threat_level:
-                st.warning(f": {threat_level}")
+            bucket = _threat_bucket(threat_level)
+            if bucket == "high":
+                st.error(f"Threat level: {threat_level or 'high'}")
+            elif bucket == "medium":
+                st.warning(f"Threat level: {threat_level or 'medium'}")
             else:
-                st.success(f": {threat_level}")
+                st.success(f"Threat level: {threat_level or 'low'}")
 
         with col3:
             processing_time = analysis_result.get("processing_time", 0)
@@ -610,13 +627,10 @@ def render_analysis_result(analysis_result: Dict):
 
                 st.markdown("**:**")
                 # 
-                if "" in analysis_text:
-                    keywords_match = re.search(r': ([^.]+)', analysis_text)
-                    if keywords_match:
-                        keywords = keywords_match.group(1)
-                        st.success(keywords)
+                if analysis_text:
+                    st.success(analysis_text)
                 else:
-                    st.success("SQL, ")
+                    st.info("No routing keywords extracted")
 
     # 
     expert_analysis = result_data.get("expert_analysis", {}) or {}
@@ -819,63 +833,10 @@ def render_analysis_result(analysis_result: Dict):
                 with col3:
                     st.metric("", "" if relevance_float < 0.7 else "")
 
-                # 
-                attack_type = "SQL"  # 
-                if "SQL" in attack_type:
-                    st.markdown("** :**")
-
-                    with st.expander(" CVE", expanded=True):
-                        st.markdown("""
-                        **CVE-2023-1337: SQL**
-                        - ****: MySQL 5.7, MariaDB 10.6
-                        - ****:  (CVSS 9.8)
-                        - ****: UNION
-                        - ****: 95.3%
-                        """)
-
-                    with st.expander(" IP", expanded=True):
-                        st.markdown("""
-                        **IP: 192.168.1.100**
-                        - ****: 
-                        - ****: 
-                        - ****: 73
-                        - ****: 
-                        - ****: 88.7%
-                        """)
-
-                    with st.expander(" ", expanded=True):
-                        st.markdown("""
-                        **UNION-based SQL**
-                        - ****: 
-                        - ****: 
-                        - ****: 
-                        - ****: 
-                        - ****: 92.1%
-                        """)
+                st.info("No matching threat-intelligence records for this alert.")
 
         else:
-            # RAG
-            st.warning(" RAG")
-
-            st.markdown("** :**")
-
-            with st.expander(" SQL", expanded=True):
-                st.markdown("""
-                **:**
-                -  `' OR '1'='1` 
-                - UNION SELECT
-                - 
-
-                **:**
-                - ****:  (9.6/10)
-                - ****: 
-                - ****: 
-
-                **:**
-                1. 
-                2. WAF
-                3. SQL
-                """)
+            st.info("No threat intelligence available for this alert.")
 
         # 
         enhanced_actions = threat_intel_enhancement.get("recommended_actions_enhanced", [])
@@ -887,108 +848,18 @@ def render_analysis_result(analysis_result: Dict):
     # 
     st.subheader(" ")
 
-    # 
     threat_level = overall_assessment.get("threat_level", "")
-
-    if "" in threat_level:
-        # 
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("###   ()")
-
-            immediate_actions = [
-                "IP 192.168.1.100 ",
-                " 10.0.0.1",
-                "",
-                "",
-                "(SOC)"
-            ]
-
-            for i, action in enumerate(immediate_actions, 1):
+    actions = overall_assessment.get("recommended_actions") or []
+    if actions:
+        for i, action in enumerate(actions, 1):
+            if _threat_bucket(threat_level) == "high":
                 st.error(f"{i}. {action}")
-
-        with col2:
-            st.markdown("###   (30)")
-
-            investigation_actions = [
-                "IP24",
-                "WAF",
-                "",
-                "",
-                ""
-            ]
-
-            for i, action in enumerate(investigation_actions, 1):
+            elif _threat_bucket(threat_level) == "medium":
                 st.warning(f"{i}. {action}")
-
-        # 
-        st.markdown("###   (1)")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            notification_actions = [
-                "",
-                "",
-                ""
-            ]
-
-            for i, action in enumerate(notification_actions, 1):
+            else:
                 st.info(f"{i}. {action}")
-
-        with col2:
-            reporting_actions = [
-                "CISO",
-                "",
-                ""
-            ]
-
-            for i, action in enumerate(reporting_actions, 1):
-                st.info(f"{i}. {action}")
-
-        # 
-        with st.expander("  (24)", expanded=True):
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                hardening_actions = [
-                    "WAFSQL",
-                    "SQL",
-                    "",
-                    "",
-                    ""
-                ]
-
-                st.markdown("**:**")
-                for i, action in enumerate(hardening_actions, 1):
-                    st.success(f"• {action}")
-
-            with col2:
-                process_actions = [
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                ]
-
-                st.markdown("**:**")
-                for i, action in enumerate(process_actions, 1):
-                    st.success(f"• {action}")
-
     else:
-        # 
-        basic_actions = [
-            "",
-            "",
-            "",
-            ""
-        ]
-
-        for i, action in enumerate(basic_actions, 1):
-            st.info(f"{i}. {action}")
+        st.info("No recommended actions returned.")
 
 def render_batch_analysis():
     """"""
@@ -1035,15 +906,21 @@ def render_batch_analysis():
                 sample_df = df.head(sample_size)
                 alert_list = []
 
+                def _cell(row, *names):
+                    for name in names:
+                        if name in row and pd.notna(row.get(name)):
+                            return str(row.get(name))
+                    return ""
+
                 for _, row in sample_df.iterrows():
                     alert_data = {
-                        "attack_type": str(row.get("", "")),
-                        "attack_stage": str(row.get("", "")),
-                        "threat_level": str(row.get("", "")),
-                        "protocol": str(row.get("", "")),
-                        "source_ip": str(row.get("IP", "")),
-                        "target_ip": str(row.get("IP", "")),
-                        "payload": str(row.get("", ""))
+                        "attack_type": _cell(row, "一级告警类型", "attack_type", "二级告警名称"),
+                        "attack_stage": _cell(row, "攻击阶段", "attack_stage"),
+                        "threat_level": _cell(row, "威胁等级", "threat_level", "告警等级"),
+                        "protocol": _cell(row, "协议", "protocol"),
+                        "source_ip": _cell(row, "源IP", "source_ip"),
+                        "target_ip": _cell(row, "目标IP", "target_ip"),
+                        "payload": _cell(row, "载荷", "攻击载荷", "payload"),
                     }
                     alert_list.append(alert_data)
 
@@ -1361,17 +1238,17 @@ def main():
     page = render_sidebar()
 
     # 
-    if page == " ":
+    if page == PAGE_OVERVIEW:
         render_system_overview()
-    elif page == " ":
+    elif page == PAGE_SINGLE:
         render_single_analysis()
-    elif page == " ":
+    elif page == PAGE_BATCH:
         render_batch_analysis()
-    elif page == " ":
+    elif page == PAGE_STATS:
         render_statistics()
-    elif page == "🧠 ":
+    elif page == PAGE_INTEL:
         render_threat_intel()
-    elif page == " ":
+    elif page == PAGE_SETTINGS:
         render_system_settings()
 
     # 
