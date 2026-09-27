@@ -1,0 +1,52 @@
+[
+  {
+    "attack_type": "SQL Injection",
+    "payload": "SELECT * FROM users WHERE id='1' OR '1'='1",
+    "source_ip": "192.168.1.100",
+    "target_ip": "10.0.0.5",
+    "timestamp": "2025-01-10T12:00:00Z",
+    "threat_level": "high",
+    "protocol": "HTTP",
+    "description": "SQL injection attack attempt"
+  },
+  {
+    "attack_type": "XSS",
+    "payload": "<script>alert(document.cookie)</script>",
+    "source_ip": "192.168.1.101",
+    "target_ip": "10.0.0.6",
+    "timestamp": "2025-01-10T12:05:00Z",
+    "threat_level": "medium",
+    "protocol": "HTTP",
+    "description": "Cross-site scripting attack"
+  },
+  {
+    "attack_type": "Command Injection",
+    "payload": "; cat /etc/passwd",
+    "source_ip": "192.168.1.102",
+    "target_ip": "10.0.0.7",
+    "timestamp": "2025-01-10T12:10:00Z",
+    "threat_level": "critical",
+    "protocol": "HTTP",
+    "description": "Command injection attack"
+  },
+  {
+    "attack_type": "Directory Traversal",
+    "payload": "../../../etc/passwd",
+    "source_ip": "192.168.1.103",
+    "target_ip": "10.0.0.8",
+    "timestamp": "2025-01-10T12:15:00Z",
+    "threat_level": "medium",
+    "protocol": "HTTP",
+    "description": "Directory traversal attack"
+  },
+  {
+    "attack_type": "CSRF",
+    "payload": "<img src='http://bank.com/transfer?to=attacker&amount=1000'>",
+    "source_ip": "192.168.1.104",
+    "target_ip": "10.0.0.9",
+    "timestamp": "2025-01-10T12:20:00Z",
+    "threat_level": "low",
+    "protocol": "HTTP",
+    "description": "Cross-site request forgery"
+  }
+]

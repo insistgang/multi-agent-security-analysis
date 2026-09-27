@@ -1,0 +1,6 @@
+﻿attack_type,payload,source_ip,target_ip,timestamp,threat_level,protocol,description
+SQL Injection,SELECT * FROM users WHERE id='1' OR '1'='1,192.168.1.100,10.0.0.5,2025-01-10T12:00:00Z,high,HTTP,SQL injection attack attempt
+XSS,<script>alert(document.cookie)</script>,192.168.1.101,10.0.0.6,2025-01-10T12:05:00Z,medium,HTTP,Cross-site scripting attack
+Command Injection,; cat /etc/passwd,192.168.1.102,10.0.0.7,2025-01-10T12:10:00Z,critical,HTTP,Command injection attack
+Directory Traversal,../../../etc/passwd,192.168.1.103,10.0.0.8,2025-01-10T12:15:00Z,medium,HTTP,Directory traversal attack
+CSRF,<img src='http://bank.com/transfer?to=attacker&amount=1000'>,192.168.1.104,10.0.0.9,2025-01-10T12:20:00Z,low,HTTP,Cross-site request forgery
