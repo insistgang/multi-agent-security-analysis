@@ -327,7 +327,11 @@ async def analyze_single_alert(
 
         # analysis_resultdatetimeJSON
         def clean_datetime(obj, memo=None):
-            """datetime"""
+            """Preserve JSON values; detect cycles only on the current recursion path."""
+            if obj is None or isinstance(obj, (str, bool, int, float)):
+                return obj
+            if isinstance(obj, datetime):
+                return obj.isoformat()
             if memo is None:
                 memo = set()
 
@@ -336,35 +340,26 @@ async def analyze_single_alert(
                 return f"[Circular Reference: {type(obj).__name__}]"
             memo.add(obj_id)
 
-            # 
-            if hasattr(obj, '__name__') and callable(obj):
-                return f"[Function: {obj.__name__}]"
-            elif str(type(obj)) == "<class 'mappingproxy'>":
-                return "[MappingProxy]"
-            elif hasattr(obj, '__module__') and hasattr(obj, '__name__'):
-                return f"[Class: {obj.__module__}.{obj.__name__}]"
-            elif isinstance(obj, datetime):
-                return obj.isoformat()
-            elif isinstance(obj, dict):
-                return {k: clean_datetime(v, memo) for k, v in obj.items()}
-            elif isinstance(obj, list):
-                return [clean_datetime(item, memo) for item in obj]
-            elif isinstance(obj, tuple):
-                return tuple(clean_datetime(item, memo) for item in obj)
-            elif hasattr(obj, '__dict__'):
-                # 
-                return clean_datetime(obj.__dict__, memo)
-            elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-                try:
+            try:
+                if hasattr(obj, '__name__') and callable(obj):
+                    return f"[Function: {obj.__name__}]"
+                if str(type(obj)) == "<class 'mappingproxy'>":
+                    return "[MappingProxy]"
+                if hasattr(obj, '__module__') and hasattr(obj, '__name__'):
+                    return f"[Class: {obj.__module__}.{obj.__name__}]"
+                if isinstance(obj, dict):
+                    return {k: clean_datetime(v, memo) for k, v in obj.items()}
+                if isinstance(obj, (list, tuple)):
                     return [clean_datetime(item, memo) for item in obj]
-                except:
-                    return f"[Unserializable: {type(obj).__name__}]"
-            else:
-                # 
-                try:
-                    return str(obj)
-                except:
-                    return f"[Unserializable: {type(obj).__name__}]"
+                if hasattr(obj, '__dict__'):
+                    return clean_datetime(obj.__dict__, memo)
+                if hasattr(obj, '__iter__') and not isinstance(obj, bytes):
+                    return [clean_datetime(item, memo) for item in obj]
+                return str(obj)
+            except Exception:
+                return f"[Unserializable: {type(obj).__name__}]"
+            finally:
+                memo.remove(obj_id)
 
         cleaned_result = clean_datetime(analysis_result)
 

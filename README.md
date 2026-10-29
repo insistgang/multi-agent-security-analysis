@@ -80,6 +80,8 @@ cd web_demo && streamlit run excel_final.py --server.port 8886
 
 Analyze endpoint body is nested:
 
+单条分析 API 保留结果中的 JSON 标量类型（数字、布尔值、字符串和 null），日期转为 ISO 字符串；共享对象可以重复序列化，只有当前递归路径上的真实循环才标记为循环引用。轻量回归运行 `python3 -B -m unittest discover -s tests -q`，无需启动 GPU 模型服务。
+
 ```json
 {
   "alert_data": {
