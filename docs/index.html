@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>网络安全威胁智能分析</title>
+<style>
+body{margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0}
+header,main{padding:28px 7vw}
+.note{color:#93c5fd}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.card{background:#1e293b;border-radius:14px;padding:16px}
+.num{font-size:1.7rem;font-weight:750}
+table{width:100%;border-collapse:collapse;margin-top:16px;background:#1e293b;border-radius:14px;overflow:hidden}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #334155}
+</style>
+</head>
+<body>
+<header>
+<h1>网络安全威胁智能分析</h1>
+<p class="note">浏览器演示。数字来自项目里的示例分析结果，不连接 GPU 模型。</p>
+</header>
+<main>
+<div class="cards" id="cards"></div>
+<table><thead><tr><th>类型</th><th>数量</th></tr></thead><tbody id="rows"></tbody></table>
+</main>
+<script>
+const stats = {"total_alerts_processed": 2847, "confirmed_attacks": 2134, "false_positives": 713, "accuracy_rate": 95.62, "average_response_time": 1.8, "throughput_per_second": 28.5};
+const attacks = {"SQL注入": {"count": 856, "percentage": 30.1, "avg_risk_score": 8.7, "top_source_ips": ["192.168.1.100", "10.0.0.50", "172.16.0.10"], "affected_systems": ["CRM系统", "用户数据库", "管理后台"]}, "XSS攻击": {"count": 642, "percentage": 22.6, "avg_risk_score": 8.2, "top_source_ips": ["203.0.113.10", "198.51.100.20", "192.0.2.30"], "affected_systems": ["Web门户", "评论区", "用户个人中心"]}, "命令注入": {"count": 523, "percentage": 18.4, "avg_risk_score": 9.1, "top_source_ips": ["10.0.0.100", "172.16.1.50", "192.168.2.200"], "affected_systems": ["备份系统", "文件上传", "日志管理"]}, "目录遍历": {"count": 412, "percentage": 14.5, "avg_risk_score": 7.5, "top_source_ips": ["192.168.3.100", "10.0.1.200", "172.16.2.50"], "affected_systems": ["文件下载", "文档管理", "资源访问"]}, "CSRF攻击": {"count": 287, "percentage": 10.1, "avg_risk_score": 7.8, "top_source_ips": ["198.51.100.100", "203.0.113.200", "192.0.2.150"], "affected_systems": ["转账系统", "用户设置", "权限管理"]}, "其他": {"count": 127, "percentage": 4.5, "avg_risk_score": 6.9, "top_source_ips": ["混合来源"], "affected_systems": ["多个系统"]}};
+const labels = {total_alerts_processed:"处理告警", confirmed_attacks:"确认攻击", false_positives:"误报", high_risk:"高风险"};
+document.querySelector("#cards").innerHTML = Object.entries(stats).slice(0,4).map(([key,value]) => `<div class="card"><div>${labels[key] || key}</div><div class="num">${value}</div></div>`).join("");
+const entries = Array.isArray(attacks) ? attacks : Object.entries(attacks);
+document.querySelector("#rows").innerHTML = entries.slice(0,8).map(item => Array.isArray(item) ? `<tr><td>${item[0]}</td><td>${typeof item[1]==="object"?JSON.stringify(item[1]):item[1]}</td></tr>` : `<tr><td colspan="2">${JSON.stringify(item)}</td></tr>`).join("");
+</script>
+</body>
+</html>
